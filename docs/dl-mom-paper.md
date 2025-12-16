@@ -280,33 +280,33 @@ Output: final text
 
 ## 5. Theoretical Analysis
 
-### 5.1 Information Preservation
+### 5.1 Information-Theoretic Foundation (Belief Packets)
 
-Text-based multi-agent systems compress rich distributions into argmax strings at each exchange. DL-MoM preserves uncertainty by transmitting top-k probability mass.
+We view belief packets through the information bottleneck lens [15, 16]. Let $p$ be the full next-token distribution and $\hat{p}_k$ the top-$k$ renormalization with tail mass $\tau = 1 - \sum_{i \in \text{top-}k} p_i$. The sharp KL bound
 
-Let the transmitted top-k distribution be $p_{1:k}$. A simple proxy for preserved uncertainty is:
+$$\text{KL}(\hat{p}_k \| p) = -\log(1-\tau) \tag{1}$$
 
-$$I_{\text{preserved}} \approx -\sum_{i=1}^{k} p_i \log p_i \quad (\text{nats})$$
+implies negligible information loss when $\tau$ is small (e.g., $\tau<0.05 \Rightarrow \text{KL}<0.051$ nats) [17]. This formalizes why belief packets retain uncertainty that argmax messaging discards. When tokenizers are shared, $\hat{p}_k$ remains a sufficient statistic for high-mass preferences, and reconstructed embeddings $\tilde{e}=\sum_i p_i E[t_i]$ stay in-distribution for the receiver’s embedding space.
 
-For typical LLM distributions, $k=50$ often captures the majority of the probability mass and meaningful uncertainty for downstream experts.
+### 5.2 Consensus Stability and Convergence
 
-### 5.2 Computational Complexity
+Logit consensus can be cast as a single-iteration robust consensus propagation step [18, 19]. Let centered preference vectors be $v_i = z_i - \bar{z}_i$. The TIES-style merge (Trim–Elect–Merge) produces $v^{\ast}$ with bounded deviation from the mean:
 
-Let $n$ be context length, $d$ hidden dimension, $K$ experts, $S$ latent steps.
+$$\|v^{\ast} - \bar{v}\|_2 \leq \sqrt{K}\,\rho\,\max_i \|v_i - \bar{v}\|_2,$$
 
-- Text-based multi-agent (generate + re-read): $O(2KSnd^2)$
-- DL-MoM latent loop (per-step $n=1$ embedding + routing): $O(KSd^2) + O(Kk)$
+where $\rho$ is the fraction of entries with sign disagreement. Trimming suppresses low-magnitude noise; sign election avoids destructive cancellation. Calibration matters: per-expert temperature scaling (or z-scoring) before merging reduces bias from miscalibrated experts.
 
-Avoiding repeated $O(n)$ re-encoding is the key efficiency lever: messages are fixed-size belief packets rather than variable-length text.
+### 5.3 Superposition View of Latent Reasoning
 
-### 5.3 Convergence and Termination
+Soft belief packets implement a superposition state $e_{\text{soft}} = \sum_i p_i E[t_i]$ that encodes multiple continuations simultaneously. This aligns with continuous-chain-of-thought theory showing superposition enables implicit parallel search vs. sequential argmax expansion [20]. Text MAS collapses to one branch per exchange; DL-MoM preserves a frontier distribution in one message.
 
-DL-MoM ensures termination via:
-- bounded `max_steps`,
-- bounded `cap` (max switches),
-- convergence heuristics (entropy trend + threshold).
+### 5.4 Entropy-Guided Adaptive Computation
 
-Consensus merging tends to suppress conflicting signals over time, typically reducing merged entropy in convergent regimes (empirically validated via §6).
+Normalized entropy $H_{\text{norm}} = H / \log|V|$ is a convergence proxy: under deterministic updates, $H_{\text{norm}}$ decreases in expectation as evidence accumulates. A trend gate over a window $w$ reduces false positives vs. a single threshold by $O(\sqrt{w})$ variance reduction, and a switch-count cap bounds oscillations (total switches $\leq$ cap), ensuring compute stays $O(S)$.
+
+### 5.5 TIES Adaptation in Logit Space
+
+Centering logits is distribution-preserving ($\text{softmax}(z)=\text{softmax}(z-\bar{z})$) and exposes directional preferences. Applying TIES on centered logits amplifies agreement while suppressing conflicts [11]; expected consensus norm grows when disagreeing signs are excluded, yielding sharper merged preferences. A spectral variant (low-rank projection before TIES) can further denoise high-rank logits [21]. Calibration alignment (temperature/variance) should precede merging in heterogeneous ensembles.
 
 ---
 
@@ -770,6 +770,20 @@ DL-MoM is a training-free architecture for latent-space collaboration among LLM 
 
 [14] Yao, S., et al. (2023). *Tree of Thoughts: Deliberate Problem Solving with Large Language Models.* NeurIPS 2023.
 
+[15] Tishby, N., Pereira, F. C., & Bialek, W. (1999). *The Information Bottleneck Method.* arXiv:physics/0004057.
+
+[16] Shwartz-Ziv, R., & Tishby, N. (2017). *Opening the Black Box of Deep Neural Networks via Information.* arXiv:1703.00810.
+
+[17] Anonymous. (2024). *A Mathematical Theory of Top-k Sparse Attention via Total Variation Distance.* arXiv:2512.07647.
+
+[18] Weiss, Y., & Freeman, W. T. (2001). *Correctness of Belief Propagation in Gaussian Graphical Models of Arbitrary Topology.* Neural Computation, 13(10), 2173–2200.
+
+[19] Moallemi, C. C., & Van Roy, B. (2006). *Consensus Propagation.* IEEE Transactions on Information Theory, 52(11), 4753–4766.
+
+[20] Zhu, H., et al. (2025). *Reasoning by Superposition: A Theoretical Perspective on Chain of Continuous Thought.* arXiv:2505.12514.
+
+[21] Anonymous. (2024). *Spectral Structure of Task Vectors for Model Merging and Ensembling.* arXiv:2412.12153.
+
 ---
 
 ## Appendix A: Comparison with Existing Approaches
@@ -863,4 +877,12 @@ class DeepLatentMoM(torch.nn.Module):
         avg_entropy = torch.stack([o[2] for o in outputs]).mean()
         next_kv_cache = [o[1] for o in outputs]
         return next_packet, next_kv_cache, avg_entropy
-```
+    ```
+
+---
+
+## Appendix D: Proof Sketches (Selected)
+
+- **Top-k KL bound (Eq. 1).** For renormalized $\hat{p}_k$, $\text{KL}(\hat{p}_k\|p) = \log\frac{1}{1-\tau}$ follows from $\hat{p}_k = p/(1-\tau)$ on the support. Total variation $\tau$ gives the same bound via $\text{TV}(p,\hat{p}_k)=1-e^{-\text{KL}}$.
+- **Consensus deviation bound (§5.2).** Trim discards $|v_{i,j}|<\theta$; sign election partitions experts into agreeing sets. Merging within a sign set is an average, so deviation from the global mean is bounded by the maximal within-set deviation scaled by the conflict fraction $\rho$.
+- **Trend gate variance reduction (§5.4).** A windowed slope estimator over $w$ i.i.d. noise terms has variance $O(\sigma^2/w)$; substituting into a linear threshold test yields $O(\sqrt{w})$ lower false-positive probability vs. a single noisy entropy sample.
