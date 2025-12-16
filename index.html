@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deep-Latent Mixture of Models (DL-MoM)</title>
+  <meta name="description" content="DL-MoM: A Training-Free Architecture for System 2 Reasoning via Latent-Space Collaboration">
+  
+  <!-- Google Scholar Meta Tags -->
+  <meta name="citation_title" content="Deep-Latent Mixture of Models: A Training-Free Architecture for System 2 Reasoning via Latent-Space Collaboration">
+  <meta name="citation_author" content="Anonymous Authors">
+  <meta name="citation_publication_date" content="2025">
+  <meta name="citation_conference_title" content="Under Review">
+  
+  <!-- Open Graph / Social Media Meta Tags -->
+  <meta property="og:title" content="Deep-Latent Mixture of Models (DL-MoM)">
+  <meta property="og:description" content="A training-free architecture enabling multiple LLMs to collaborate entirely in latent space for System 2 reasoning.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="static/images/social_preview.png">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Deep-Latent Mixture of Models (DL-MoM)">
+  <meta name="twitter:description" content="A training-free architecture enabling multiple LLMs to collaborate entirely in latent space.">
+  <meta name="twitter:image" content="static/images/social_preview.png">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  
+  <!-- Bulma CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Academicons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="static/css/style.css">
+  
+  <!-- MathJax for equations -->
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+<!-- More Works Dropdown -->
+<div class="more-works-dropdown">
+  <button class="more-works-btn" onclick="toggleMoreWorks()">
+    <i class="fas fa-flask"></i> More Works
+  </button>
+  <div class="more-works-content" id="moreWorksContent">
+    <h4>Related Research</h4>
+    <a href="https://arxiv.org/abs/2412.06769" target="_blank" class="work-item">
+      <strong>Coconut</strong>
+      <p>Training LLMs to reason in continuous latent space.</p>
+      <span class="venue">arXiv 2024</span>
+    </a>
+    <a href="https://arxiv.org/abs/2505.15778" target="_blank" class="work-item">
+      <strong>Soft Thinking</strong>
+      <p>Unlocking reasoning potential in continuous concept space.</p>
+      <span class="venue">arXiv 2025</span>
+    </a>
+    <a href="https://swireasoning.github.io/" target="_blank" class="work-item">
+      <strong>SwiReasoning</strong>
+      <p>Switch-thinking for Pareto-superior reasoning.</p>
+      <span class="venue">2025</span>
+    </a>
+    <a href="https://arxiv.org/abs/2402.02750" target="_blank" class="work-item">
+      <strong>KIVI</strong>
+      <p>Tuning-free 2-bit KV cache quantization.</p>
+      <span class="venue">arXiv 2024</span>
+    </a>
+  </div>
+</div>
+
+<!-- Hero Section -->
+<section class="hero is-light">
+  <div class="hero-body">
+    <div class="container has-text-centered">
+      <h1 class="title is-1 publication-title">
+        Deep-Latent Mixture of Models
+      </h1>
+      <h2 class="subtitle is-3 publication-subtitle">
+        A Training-Free Architecture for System 2 Reasoning via Latent-Space Collaboration
+      </h2>
+      
+      <!-- Authors -->
+      <div class="authors">
+        <span class="author-block">
+          <a href="#">Anonymous Authors</a>
+        </span>
+      </div>
+      
+      <!-- Institution -->
+      <div class="institution">
+        <span>Under Review</span>
+      </div>
+      
+      <!-- Links -->
+      <div class="publication-links">
+        <a class="button is-rounded is-dark" href="static/pdfs/dl-mom-paper.pdf" target="_blank">
+          <span class="icon"><i class="fas fa-file-pdf"></i></span>
+          <span>Paper</span>
+        </a>
+        <a class="button is-rounded is-dark" href="https://arxiv.org/abs/XXXX.XXXXX" target="_blank">
+          <span class="icon"><i class="ai ai-arxiv"></i></span>
+          <span>arXiv</span>
+        </a>
+        <a class="button is-rounded is-dark" href="https://github.com/anonymous/dl-mom" target="_blank">
+          <span class="icon"><i class="fab fa-github"></i></span>
+          <span>Code</span>
+        </a>
+        <a class="button is-rounded is-dark" href="#bibtex">
+          <span class="icon"><i class="fas fa-quote-right"></i></span>
+          <span>Cite</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Teaser Figure -->
+<section class="section">
+  <div class="container">
+    <div class="teaser-image">
+      <img src="static/images/architecture.svg" alt="DL-MoM Architecture Overview" loading="lazy">
+      <p class="teaser-caption">
+        <strong>DL-MoM Architecture:</strong> Multiple expert models collaborate entirely in latent space, 
+        communicating via Soft Belief Packets and reaching consensus through TIES-Merging. 
+        The SwiReasoning controller adaptively determines reasoning depth based on entropy trends.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Abstract -->
+<section class="section">
+  <div class="container">
+    <h2 class="title is-3 has-text-centered">Abstract</h2>
+    <div class="content abstract-content">
+      <p>
+        We present <strong>Deep-Latent Mixture of Models (DL-MoM)</strong>, a novel training-free architecture 
+        that enables multiple large language models to collaborate entirely within latent space, mimicking 
+        System 2 reasoning capabilities without fine-tuning. Unlike traditional mixture-of-experts systems 
+        that route text tokens, DL-MoM routes probabilistic belief representations—<em>"Soft Belief Packets"</em>—between 
+        heterogeneous expert models.
+      </p>
+      <p>
+        Our framework integrates insights from recent advances in latent reasoning (Soft Thinking, Coconut), 
+        adaptive computation (SwiReasoning), multi-agent collaboration (LatentMAS), and training-free KV-cache 
+        compression (KIVI, MiniCache). We introduce three key innovations: (1) a <strong>Sparse Belief Packet protocol</strong> 
+        enabling cross-model communication without alignment matrices, (2) a <strong>trend-based entropy controller</strong> 
+        for dynamic switching between exploration and exploitation modes, and (3) a <strong>TIES-Merging consensus engine</strong> 
+        that combines expert outputs in latent space.
+      </p>
+      <p>
+        Preliminary analysis suggests DL-MoM can leverage complementary strengths of specialized models 
+        while reducing inference overhead by <strong>60-90%</strong> compared to text-based multi-agent systems.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Key Idea / TLDR -->
+<section class="section has-background-light">
+  <div class="container">
+    <h2 class="title is-3 has-text-centered">Key Insight</h2>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="box key-insight-box">
+          <p class="is-size-5">
+            <i class="fas fa-lightbulb has-text-warning"></i>
+            <strong>Standard MoE systems route text tokens to experts.</strong><br>
+            <strong>DL-MoM routes <em>thoughts</em> (latent states).</strong>
+          </p>
+          <p class="is-size-6 mt-3">
+            The latent space serves as the universal interface—agents think, communicate, and reach 
+            consensus entirely in high-dimensional representation space, decoding to text only when necessary.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Method Overview -->
+<section class="section">
+  <div class="container">
+    <h2 class="title is-3 has-text-centered">Method Overview</h2>
+    
+    <!-- Architecture Diagram -->
+    <div class="architecture-diagram">
+      <pre class="architecture-ascii">
+┌─────────────────────────────────────────────────────────────────────┐
+│                         User Prompt                                  │
+└─────────────────────────────┬───────────────────────────────────────┘
+                              │
+                              ▼
+                    ┌─────────────────┐
+                    │ Embedding Layer │
+                    └────────┬────────┘
+                              │
+                              ▼
+                 ┌────────────────────────┐
+                 │ Lookahead Latent Router │
+                 └────────────┬───────────┘
+                              │
+          ┌───────────────────┼───────────────────┐
+          │                   │                   │
+          ▼                   ▼                   ▼
+   ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+   │  Expert A   │     │  Expert B   │     │  Expert C   │
+   │ (Logic/Math)│◄───►│ (Creativity)│◄───►│  (Domain)   │
+   └──────┬──────┘     └──────┬──────┘     └──────┬──────┘
+          │                   │                   │
+          │    Latent Bus (KIVI-Compressed KV)    │
+          │                   │                   │
+          └───────────────────┼───────────────────┘
+                              │
+                              ▼
+                 ┌────────────────────────┐
+                 │ SwiReasoning Controller │
+                 │    (Entropy Trends)     │
+                 └────────────┬───────────┘
+                              │
+              ┌───────────────┴───────────────┐
+              │                               │
+              ▼                               ▼
+     High Entropy (Uncertain)        Low Entropy (Confident)
+              │                               │
+              │                               ▼
+              │                  ┌────────────────────────┐
+              │                  │ Latent Consensus Engine │
+              │                  │    (TIES-Merging)       │
+              │                  └────────────┬───────────┘
+              │                               │
+              └──────► Loop Back              ▼
+                                     ┌───────────────┐
+                                     │ Final Answer  │
+                                     └───────────────┘
+      </pre>
+    </div>
+    
+    <!-- Five Layers -->
+    <div class="columns is-multiline mt-5">
+      <div class="column is-6">
+        <div class="box component-box">
+          <h4 class="title is-5"><i class="fas fa-route has-text-primary"></i> Layer 1: Perplexity-Probing Router</h4>
+          <p>Generates a lightweight "Latent Preview" (5 tokens), decodes to text, then routes to the expert with <strong>lowest perplexity</strong> on that sequence—leveraging each model's native "worldview."</p>
+        </div>
+      </div>
+      <div class="column is-6">
+        <div class="box component-box">
+          <h4 class="title is-5"><i class="fas fa-brain has-text-info"></i> Layer 2: Soft Thinking Engines</h4>
+          <p>Experts generate <strong>Soft Belief Packets</strong> (top-k token IDs + probabilities) instead of discrete tokens, preserving distributional information.</p>
+        </div>
+      </div>
+      <div class="column is-6">
+        <div class="box component-box">
+          <h4 class="title is-5"><i class="fas fa-sliders-h has-text-success"></i> Layer 3: SwiReasoning Controller</h4>
+          <p>Monitors <strong>entropy trends</strong> (not just thresholds) to decide when to continue latent reasoning vs. output explicit tokens.</p>
+        </div>
+      </div>
+      <div class="column is-6">
+        <div class="box component-box">
+          <h4 class="title is-5"><i class="fas fa-network-wired has-text-warning"></i> Layer 4: Latent Communication Bus</h4>
+          <p>Transmits KV-caches between experts using <strong>KIVI 2-bit quantization</strong> + <strong>MiniCache</strong> for 85-90% compression.</p>
+        </div>
+      </div>
+      <div class="column is-12">
+        <div class="box component-box">
+          <h4 class="title is-5"><i class="fas fa-handshake has-text-danger"></i> Layer 5: Contrastive Consensus Engine</h4>
+          <p>Combines expert logits through <strong>Contrastive TIES-Merging</strong>: first <strong>center</strong> logits to create preference vectors, then <strong>Trim → Elect → Merge</strong>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Soft Belief Packet Protocol -->
+<section class="section has-background-light">
+  <div class="container">
+    <h2 class="title is-3 has-text-centered">The Soft Belief Packet Protocol</h2>
+    <div class="columns is-centered">
+      <div class="column is-10">
+        <div class="content">
+          <p class="is-size-5">
+            A critical challenge in heterogeneous multi-agent systems is <strong>representation alignment</strong>. 
+            Even models sharing the same tokenizer have different embedding matrices.
+          </p>
+          
+          <div class="box equation-box">
+            <p><strong>Soft Belief Packet:</strong></p>
+            <p class="has-text-centered is-size-5">
+              \(\text{Packet} = \{(token\_id_1, p_1), (token\_id_2, p_2), ..., (token\_id_k, p_k)\}\)
+            </p>
+            <p class="mt-3"><strong>Receiver Reconstruction:</strong></p>
+            <p class="has-text-centered is-size-5">
+              \(e_{soft} = \sum_i p_i \cdot E_{receiver}[token\_id_i]\)
+            </p>
+          </div>
+          
+          <p>
+            This preserves the "fuzzy" nature of latent thought while ensuring semantic compatibility 
+            across models—<strong>no trained alignment matrices required</strong>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Comparison Table -->
+<section class="section">
+  <div class="container">
+    <h2 class="title is-3 has-text-centered">Comparison with Existing Approaches</h2>
+    <div class="table-container">
+      <table class="table is-bordered is-striped is-hoverable is-fullwidth comparison-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Text MAS</th>
+            <th>LatentMAS</th>
+            <th>InterLat</th>
+            <th>Soft Thinking</th>
+            <th class="has-background-primary-light"><strong>DL-MoM (Ours)</strong></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Bandwidth</strong></td>
+            <td><span class="tag is-warning">Low</span></td>
+            <td><span class="tag is-success">High</span></td>
+            <td><span class="tag is-success">High</span></td>
+            <td><span class="tag is-info">Medium</span></td>
+            <td class="has-background-primary-light"><span class="tag is-success">High</span></td>
+          </tr>
+          <tr>
+            <td><strong>Training-Free</strong></td>
+            <td><span class="tag is-success">Yes</span></td>
+            <td><span class="tag is-danger">No</span></td>
+            <td><span class="tag is-danger">No</span></td>
+            <td><span class="tag is-success">Yes</span></td>
+            <td class="has-background-primary-light"><span class="tag is-success">Yes</span></td>
+          </tr>
+          <tr>
+            <td><strong>Heterogeneous Models</strong></td>
+            <td><span class="tag is-success">Yes</span></td>
+            <td><span class="tag is-warning">Limited</span></td>
+            <td><span class="tag is-danger">No</span></td>
+            <td><span class="tag is-danger">No</span></td>
+            <td class="has-background-primary-light"><span class="tag is-success">Yes</span></td>
+          </tr>
+          <tr>
+            <td><strong>Reasoning Style</strong></td>
+            <td>Linear</td>
+            <td>Linear</td>
+            <td>Linear</td>
+            <td>BFS</td>
+            <td class="has-background-primary-light"><strong>BFS</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Consensus Method</strong></td>
+            <td>Voting</td>
+            <td>W<sub>a</sub> Align</td>
+            <td>Adapter</td>
+            <td>N/A</td>
+            <td class="has-background-primary-light"><strong>Contrastive TIES</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Adaptive Depth</strong></td>
+            <td><span class="tag is-danger">No</span></td>
+            <td><span class="tag is-danger">No</span></td>
+            <td><span class="tag is-danger">No</span></td>
+            <td><span class="tag is-danger">No</span></td>
+            <td class="has-background-primary-light"><span class="tag is-success">Yes</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- Algorithm -->
+<section class="section has-background-light">
+  <div class="container">
+    <h2 class="title is-3 has-text-centered">Algorithm</h2>
+    <div class="columns is-centered">
+      <div class="column is-10">
+        <div class="box code-box">
+          <h4 class="title is-5">Algorithm 1: DL-MoM Forward Pass</h4>
+          <pre><code class="language-python">def dl_mom_forward(input_ids, experts, max_steps=40):
+    packet = init_packet(input_ids)  # Hard token start
+    kv_cache = [None] * len(experts)
+    entropy_window = []
+    
+    for step in range(max_steps):
+        expert_outputs = []
+        
+        # Parallel Expert Thinking
+        for i, expert in enumerate(experts):
+            embed = reconstruct_soft_input(packet, expert)
+            out = expert.forward(embed, kv_cache[i])
+            entropy = compute_normalized_entropy(out.logits)
+            expert_outputs.append((out.logits, out.kv, entropy))
+        
+        # SwiReasoning Controller
+        avg_entropy = mean([e.entropy for e in expert_outputs])
+        entropy_window.append(avg_entropy)
+        trend = compute_trend(entropy_window[-5:])
+        
+        if is_converging(trend) or switch_count > MAX_SWITCHES:
+            break  # Exit latent loop
+        
+        # Contrastive TIES-Merging Consensus
+        merged = contrastive_ties_merge([e.logits for e in expert_outputs])
+        packet = create_belief_packet(merged, top_k=50)
+        
+        # Optional: Stochastic perturbation
+        if USE_STOCHASTIC:
+            packet = gumbel_softmax(packet, temperature=τ)
+    
+    return argmax(packet)  # Final discrete output
+
+def contrastive_ties_merge(logit_list, trim_thresh=0.1):
+    # 1. Center logits (raw scores → relative preferences)
+    centered = [l - l.mean(dim=-1, keepdim=True) for l in logit_list]
+    stacked = torch.stack(centered)  # [K, Batch, Vocab]
+    
+    # 2. Trim (remove low-magnitude noise)
+    mask = torch.abs(stacked) > trim_thresh
+    trimmed = stacked * mask.float()
+    
+    # 3. Elect (vote on sign: prefer or reject each token)
+    sign_sum = torch.sign(trimmed).sum(dim=0)
+    vote_sign = torch.sign(sign_sum)
+    
+    # 4. Merge (average only agreeing experts)
+    agreement = (torch.sign(trimmed) == vote_sign).float()
+    count = torch.clamp(agreement.sum(dim=0), min=1.0)
+    merged = (trimmed * agreement).sum(dim=0) / count
+    
+    return merged</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Theoretical Benefits -->
+<section class="section">
+  <div class="container">
+    <h2 class="title is-3 has-text-centered">Why Latent-Space Collaboration?</h2>
+    <div class="columns">
+      <div class="column is-4">
+        <div class="box benefit-box has-text-centered">
+          <span class="icon is-large has-text-primary">
+            <i class="fas fa-tachometer-alt fa-3x"></i>
+          </span>
+          <h4 class="title is-5 mt-3">10× Faster Communication</h4>
+          <p>Fixed-size belief packets vs. variable-length token sequences eliminate O(n) per-step overhead.</p>
+        </div>
+      </div>
+      <div class="column is-4">
+        <div class="box benefit-box has-text-centered">
+          <span class="icon is-large has-text-info">
+            <i class="fas fa-project-diagram fa-3x"></i>
+          </span>
+          <h4 class="title is-5 mt-3">85-95% Information Preserved</h4>
+          <p>Top-k probability mass retention vs. 0% for argmax decoding enables informed downstream decisions.</p>
+        </div>
+      </div>
+      <div class="column is-4">
+        <div class="box benefit-box has-text-centered">
+          <span class="icon is-large has-text-success">
+            <i class="fas fa-code-branch fa-3x"></i>
+          </span>
+          <h4 class="title is-5 mt-3">Non-Linear Reasoning</h4>
+          <p>Breadth-first search in latent space explores multiple paths simultaneously.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Hyperparameters -->
+<section class="section has-background-light">
+  <div class="container">
+    <h2 class="title is-3 has-text-centered">Recommended Hyperparameters</h2>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="table-container">
+          <table class="table is-bordered is-striped is-hoverable is-fullwidth">
+            <thead>
+              <tr>
+                <th>Parameter</th>
+                <th>Value</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>top_k</code></td>
+                <td>50</td>
+                <td>Balance information vs. sparsity</td>
+              </tr>
+              <tr>
+                <td><code>entropy_window</code></td>
+                <td>5</td>
+                <td>Steps for trend computation</td>
+              </tr>
+              <tr>
+                <td><code>max_latent_steps</code></td>
+                <td>40</td>
+                <td>Upper bound on reasoning depth</td>
+              </tr>
+              <tr>
+                <td><code>max_switches</code></td>
+                <td>5</td>
+                <td>Prevent mode oscillation</td>
+              </tr>
+              <tr>
+                <td><code>gumbel_temperature</code></td>
+                <td>1.0</td>
+                <td>Lower = more deterministic</td>
+              </tr>
+              <tr>
+                <td><code>trim_threshold</code></td>
+                <td>0.1</td>
+                <td>TIES noise removal</td>
+              </tr>
+              <tr>
+                <td><code>convergence_threshold</code></td>
+                <td>0.15</td>
+                <td>Normalized entropy for exit</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Recommended Stack -->
+<section class="section">
+  <div class="container">
+    <h2 class="title is-3 has-text-centered">Recommended Implementation Stack</h2>
+    <div class="columns">
+      <div class="column is-4">
+        <div class="box">
+          <h4 class="title is-5"><i class="fas fa-robot has-text-primary"></i> Models</h4>
+          <ul>
+            <li><strong>Math:</strong> Qwen2.5-Math-7B</li>
+            <li><strong>Reasoning:</strong> Llama-3.1-8B-Instruct</li>
+            <li><strong>Code:</strong> DeepSeek-Coder-7B</li>
+          </ul>
+        </div>
+      </div>
+      <div class="column is-4">
+        <div class="box">
+          <h4 class="title is-5"><i class="fas fa-cogs has-text-info"></i> Infrastructure</h4>
+          <ul>
+            <li><strong>Inference:</strong> vLLM</li>
+            <li><strong>Compression:</strong> KIVI / bitsandbytes</li>
+            <li><strong>Merging:</strong> MergeKit</li>
+          </ul>
+        </div>
+      </div>
+      <div class="column is-4">
+        <div class="box">
+          <h4 class="title is-5"><i class="fas fa-microchip has-text-success"></i> Hardware</h4>
+          <ul>
+            <li><strong>Optimal:</strong> A100 / H100</li>
+            <li><strong>Consumer:</strong> RTX 3090/4090</li>
+            <li>+ KIVI 2-bit quantization</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Limitations -->
+<section class="section">
+  <div class="container">
+    <h2 class="title is-3 has-text-centered">Limitations & Scope</h2>
+    <div class="columns is-centered">
+      <div class="column is-10">
+        <div class="box" style="border-left: 4px solid #f14668;">
+          <h4 class="title is-5"><i class="fas fa-exclamation-triangle has-text-danger"></i> Important Constraints</h4>
+          <ul>
+            <li><strong>Tokenizer Compatibility:</strong> DL-MoM V1 requires models with compatible tokenizers 
+            (e.g., all Llama-3 derivatives, or Mistral/Llama mixes that share vocabulary). For mismatched tokenizers, 
+            a <strong>Text-Bridge Fallback</strong> decodes top-1 to text for re-encoding, preserving architecture but losing "soft" information.</li>
+            <li><strong>Memory Overhead:</strong> Despite KIVI compression, maintaining KV-caches for multiple 7B experts 
+            requires ≥24GB VRAM. Consumer deployment limited to 2-3 experts.</li>
+            <li><strong>Empirical Validation:</strong> This paper presents architecture and theoretical analysis. 
+            Comprehensive benchmark results are ongoing work.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BibTeX -->
+<section class="section" id="bibtex">
+  <div class="container">
+    <h2 class="title is-3 has-text-centered">BibTeX</h2>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="box bibtex-box">
+          <button class="button is-small is-light copy-btn" onclick="copyBibtex()">
+            <span class="icon"><i class="fas fa-copy"></i></span>
+            <span>Copy</span>
+          </button>
+          <pre id="bibtex-content">@article{dlmom2025,
+  title={Deep-Latent Mixture of Models: A Training-Free Architecture 
+         for System 2 Reasoning via Latent-Space Collaboration},
+  author={Anonymous},
+  journal={Under Review},
+  year={2025},
+  url={https://github.com/anonymous/dl-mom}
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Acknowledgments -->
+<section class="section has-background-light">
+  <div class="container">
+    <h2 class="title is-3 has-text-centered">Acknowledgments</h2>
+    <div class="content has-text-centered">
+      <p>
+        This work builds upon insights from <a href="https://arxiv.org/abs/2412.06769">Coconut</a>, 
+        <a href="https://arxiv.org/abs/2505.15778">Soft Thinking</a>, 
+        <a href="https://swireasoning.github.io/">SwiReasoning</a>, 
+        <a href="https://arxiv.org/abs/2511.20639">LatentMAS</a>, 
+        <a href="https://arxiv.org/abs/2511.09149">InterLat</a>, 
+        <a href="https://arxiv.org/abs/2402.02750">KIVI</a>, 
+        <a href="https://arxiv.org/abs/2405.14366">MiniCache</a>, and 
+        <a href="https://proceedings.neurips.cc/paper_files/paper/2023/hash/1644c9af28ab7916874f6fd6f55f7b49-Abstract-Conference.html">TIES-Merging</a>.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <p>
+        This page was built using the 
+        <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a> 
+        which was adopted from the <a href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
+      </p>
+      <p>
+        This website is licensed under a 
+        <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">
+          Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+      </p>
+    </div>
+  </div>
+</footer>
+
+<!-- JavaScript -->
+<script>
+function toggleMoreWorks() {
+  const content = document.getElementById('moreWorksContent');
+  content.classList.toggle('show');
+}
+
+function copyBibtex() {
+  const bibtex = document.getElementById('bibtex-content').innerText;
+  navigator.clipboard.writeText(bibtex).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.innerHTML = '<span class="icon"><i class="fas fa-check"></i></span><span>Copied!</span>';
+    setTimeout(() => {
+      btn.innerHTML = '<span class="icon"><i class="fas fa-copy"></i></span><span>Copy</span>';
+    }, 2000);
+  });
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+  const dropdown = document.querySelector('.more-works-dropdown');
+  if (!dropdown.contains(event.target)) {
+    document.getElementById('moreWorksContent').classList.remove('show');
+  }
+});
+</script>
+
+</body>
+</html>

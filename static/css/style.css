@@ -1,0 +1,373 @@
+/* DL-MoM Academic Project Page Styles */
+
+:root {
+  --primary-color: #3273dc;
+  --secondary-color: #485fc7;
+  --accent-color: #00d1b2;
+  --text-color: #363636;
+  --light-bg: #f5f5f5;
+  --border-radius: 8px;
+}
+
+/* General */
+body {
+  font-family: 'Roboto', sans-serif;
+  color: var(--text-color);
+}
+
+h1, h2, h3, h4, h5, h6, .title {
+  font-family: 'Google Sans', 'Roboto', sans-serif;
+}
+
+/* Hero Section */
+.hero.is-light {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 3rem 1.5rem;
+}
+
+.publication-title {
+  color: white !important;
+  font-weight: 700;
+  font-size: 2.8rem !important;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+.publication-subtitle {
+  color: rgba(255,255,255,0.95) !important;
+  font-weight: 400;
+  font-size: 1.4rem !important;
+  margin-top: 0.5rem;
+}
+
+.authors {
+  margin-top: 1.5rem;
+}
+
+.author-block a {
+  color: white;
+  font-size: 1.2rem;
+  text-decoration: none;
+}
+
+.author-block a:hover {
+  text-decoration: underline;
+}
+
+.institution {
+  margin-top: 0.5rem;
+  color: rgba(255,255,255,0.9);
+  font-size: 1.1rem;
+}
+
+.publication-links {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.publication-links .button {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.publication-links .button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* Teaser */
+.teaser-image {
+  text-align: center;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.teaser-image img {
+  max-width: 100%;
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.teaser-caption {
+  margin-top: 1rem;
+  color: #666;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* Abstract */
+.abstract-content {
+  max-width: 800px;
+  margin: 0 auto;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  text-align: justify;
+}
+
+/* Key Insight Box */
+.key-insight-box {
+  background: linear-gradient(135deg, #fff9e6 0%, #fff3cd 100%);
+  border-left: 4px solid #ffc107;
+  padding: 1.5rem;
+}
+
+.key-insight-box .fa-lightbulb {
+  margin-right: 0.5rem;
+}
+
+/* Architecture Diagram */
+.architecture-diagram {
+  overflow-x: auto;
+  margin: 2rem 0;
+}
+
+.architecture-ascii {
+  background: #1e1e1e;
+  color: #d4d4d4;
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+/* Component Boxes */
+.component-box {
+  height: 100%;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.component-box:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.component-box .title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Equation Box */
+.equation-box {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  padding: 1.5rem;
+}
+
+/* Comparison Table */
+.comparison-table {
+  font-size: 0.95rem;
+}
+
+.comparison-table th {
+  background: #f5f5f5;
+  font-weight: 600;
+}
+
+.comparison-table .tag {
+  font-size: 0.8rem;
+}
+
+/* Code Box */
+.code-box {
+  background: #1e1e1e;
+  padding: 0;
+  overflow: hidden;
+}
+
+.code-box .title {
+  background: #2d2d2d;
+  color: white;
+  padding: 1rem 1.5rem;
+  margin: 0;
+  font-size: 1rem;
+}
+
+.code-box pre {
+  margin: 0;
+  padding: 1.5rem;
+  background: #1e1e1e;
+  overflow-x: auto;
+}
+
+.code-box code {
+  color: #d4d4d4;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+/* Benefit Boxes */
+.benefit-box {
+  height: 100%;
+  transition: transform 0.2s, box-shadow 0.2s;
+  padding: 2rem;
+}
+
+.benefit-box:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+/* BibTeX Box */
+.bibtex-box {
+  position: relative;
+  background: #f8f9fa;
+  padding: 1.5rem;
+}
+
+.bibtex-box pre {
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  font-size: 0.9rem;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.copy-btn {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+}
+
+/* More Works Dropdown */
+.more-works-dropdown {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1000;
+}
+
+.more-works-btn {
+  background: white;
+  border: 1px solid #ddd;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  transition: box-shadow 0.2s;
+}
+
+.more-works-btn:hover {
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+.more-works-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.5rem;
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  width: 320px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.more-works-content.show {
+  display: block;
+}
+
+.more-works-content h4 {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.work-item {
+  display: block;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border-radius: 6px;
+  text-decoration: none;
+  color: var(--text-color);
+  transition: background 0.2s;
+}
+
+.work-item:hover {
+  background: #f5f5f5;
+}
+
+.work-item strong {
+  display: block;
+  color: var(--primary-color);
+  margin-bottom: 0.25rem;
+}
+
+.work-item p {
+  font-size: 0.85rem;
+  color: #666;
+  margin: 0;
+}
+
+.work-item .venue {
+  font-size: 0.75rem;
+  color: #999;
+}
+
+/* Footer */
+.footer {
+  padding: 2rem;
+  background: #f5f5f5;
+}
+
+.footer a {
+  color: var(--primary-color);
+}
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+  .publication-title {
+    font-size: 2rem !important;
+  }
+  
+  .publication-subtitle {
+    font-size: 1.1rem !important;
+  }
+  
+  .architecture-ascii {
+    font-size: 0.65rem;
+  }
+  
+  .more-works-content {
+    width: 280px;
+  }
+  
+  .abstract-content {
+    text-align: left;
+  }
+}
+
+/* Print styles */
+@media print {
+  .more-works-dropdown,
+  .publication-links {
+    display: none;
+  }
+  
+  .hero.is-light {
+    background: white;
+  }
+  
+  .publication-title,
+  .publication-subtitle,
+  .author-block a,
+  .institution {
+    color: black !important;
+    text-shadow: none;
+  }
+}
