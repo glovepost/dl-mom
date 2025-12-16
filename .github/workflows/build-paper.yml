@@ -1,0 +1,41 @@
+name: Build Paper PDF
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-pdf:
+    name: Generate PDF from Markdown
+    runs-on: ubuntu-latest
+    if: ${{ hashFiles('docs/dl-mom-paper.md') != '' }}
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build PDF
+        run: |
+          mkdir -p static/pdfs
+          docker run --rm -v "$PWD:/data" --workdir /data pandoc/latex:3 \
+            --from=gfm --pdf-engine=xelatex \
+            --output=static/pdfs/dl-mom-paper.pdf \
+            docs/dl-mom-paper.md
+
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dl-mom-paper
+          path: static/pdfs/dl-mom-paper.pdf
+
+      - name: Commit updated PDF back to main
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: build paper [skip ci]"
+          file_pattern: static/pdfs/dl-mom-paper.pdf
