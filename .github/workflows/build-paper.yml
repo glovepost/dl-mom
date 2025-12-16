@@ -24,15 +24,20 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Build pandoc image with rsvg + xelatex
+        run: |
+          docker build \
+            -f .github/docker/pandoc-latex-rsvg/Dockerfile \
+            -t pandoc-latex-rsvg:local \
+            .
+
       - name: Build PDF
         run: |
           mkdir -p static/pdfs
-          docker run --rm --entrypoint /bin/sh -v "$PWD:/data" --workdir /data pandoc/latex:3 -lc " \
-            apk add --no-cache librsvg texlive-xetex && \
-            pandoc --from=gfm --pdf-engine=xelatex \
-              --output=static/pdfs/dl-mom-paper.pdf \
-              docs/dl-mom-paper.md \
-          "
+          docker run --rm -v "$PWD:/data" --workdir /data pandoc-latex-rsvg:local \
+            --from=gfm --pdf-engine=xelatex \
+            --output=static/pdfs/dl-mom-paper.pdf \
+            docs/dl-mom-paper.md
 
       - name: Upload PDF artifact
         uses: actions/upload-artifact@v4
