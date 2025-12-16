@@ -229,6 +229,59 @@
   </div>
 </section>
 
+<!-- Theoretical Foundations -->
+<section class="section has-background-light">
+  <div class="container">
+    <h2 class="title is-3 has-text-centered">Theoretical Foundations</h2>
+    <div class="columns is-multiline">
+      <div class="column is-6">
+        <div class="box">
+          <h4 class="title is-5">Information Preservation</h4>
+          <p class="is-size-6">
+            Belief packets retain uncertainty via top-k probability mass. A sharp KL bound
+            ($\mathrm{KL}(\hat{p}_k\|p) = -\log(1-\tau)$) shows negligible loss when tail mass
+            $\tau$ is small, grounding why soft packets outperform argmax messaging.
+          </p>
+        </div>
+      </div>
+      <div class="column is-6">
+        <div class="box">
+          <h4 class="title is-5">Consensus Stability</h4>
+          <p class="is-size-6">
+            Contrastive TIES on centered logits is a one-step robust consensus propagation:
+            trimming removes noise, sign election avoids destructive cancellation, and a bounded
+            deviation guarantee keeps merged preferences close to the expert mean when
+            calibrated.
+          </p>
+        </div>
+      </div>
+      <div class="column is-6">
+        <div class="box">
+          <h4 class="title is-5">Superposition & Parallel Search</h4>
+          <p class="is-size-6">
+            Soft belief embeddings encode multiple continuations simultaneously, enabling
+            implicit parallel expansion (continuous chain-of-thought) versus sequential
+            branch-by-branch text routing.
+          </p>
+        </div>
+      </div>
+      <div class="column is-6">
+        <div class="box">
+          <h4 class="title is-5">Entropy-Guided Control</h4>
+          <p class="is-size-6">
+            Normalized entropy trends reduce false stopping decisions and switch-count caps
+            bound oscillation, keeping adaptive computation stable and compute-bounded.
+          </p>
+        </div>
+      </div>
+    </div>
+    <p class="has-text-centered mt-4">
+      See Section 5 of the paper for proofs and detailed derivations (information bottleneck,
+      consensus propagation, superposition theory, and logit-space TIES).
+    </p>
+  </div>
+</section>
+
 <!-- Soft Belief Packet Protocol -->
 <section class="section has-background-light">
   <div class="container">
