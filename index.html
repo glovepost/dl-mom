@@ -103,7 +103,7 @@
       
       <!-- Links -->
       <div class="publication-links">
-        <a class="button is-rounded is-dark" href="static/pdfs/dl-mom-paper.pdf" target="_blank">
+        <a class="button is-rounded is-dark" href="pdfs/dl-mom-paper.pdf" target="_blank">
           <span class="icon"><i class="fas fa-file-pdf"></i></span>
           <span>Paper</span>
         </a>
@@ -111,7 +111,7 @@
           <span class="icon"><i class="ai ai-arxiv"></i></span>
           <span>arXiv</span>
         </a>
-        <a class="button is-rounded is-dark" href="https://github.com/anonymous/dl-mom" target="_blank">
+        <a class="button is-rounded is-dark" href="https://github.com/glovepost/dl-mom" target="_blank">
           <span class="icon"><i class="fab fa-github"></i></span>
           <span>Code</span>
         </a>
@@ -192,59 +192,6 @@
 <section class="section">
   <div class="container">
     <h2 class="title is-3 has-text-centered">Method Overview</h2>
-    
-    <!-- Architecture Diagram -->
-    <div class="architecture-diagram">
-      <pre class="architecture-ascii">
-┌─────────────────────────────────────────────────────────────────────┐
-│                         User Prompt                                  │
-└─────────────────────────────┬───────────────────────────────────────┘
-                              │
-                              ▼
-                    ┌─────────────────┐
-                    │ Embedding Layer │
-                    └────────┬────────┘
-                              │
-                              ▼
-                 ┌────────────────────────┐
-                 │ Lookahead Latent Router │
-                 └────────────┬───────────┘
-                              │
-          ┌───────────────────┼───────────────────┐
-          │                   │                   │
-          ▼                   ▼                   ▼
-   ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-   │  Expert A   │     │  Expert B   │     │  Expert C   │
-   │ (Logic/Math)│◄───►│ (Creativity)│◄───►│  (Domain)   │
-   └──────┬──────┘     └──────┬──────┘     └──────┬──────┘
-          │                   │                   │
-          │    Latent Bus (KIVI-Compressed KV)    │
-          │                   │                   │
-          └───────────────────┼───────────────────┘
-                              │
-                              ▼
-                 ┌────────────────────────┐
-                 │ SwiReasoning Controller │
-                 │    (Entropy Trends)     │
-                 └────────────┬───────────┘
-                              │
-              ┌───────────────┴───────────────┐
-              │                               │
-              ▼                               ▼
-     High Entropy (Uncertain)        Low Entropy (Confident)
-              │                               │
-              │                               ▼
-              │                  ┌────────────────────────┐
-              │                  │ Latent Consensus Engine │
-              │                  │    (TIES-Merging)       │
-              │                  └────────────┬───────────┘
-              │                               │
-              └──────► Loop Back              ▼
-                                     ┌───────────────┐
-                                     │ Final Answer  │
-                                     └───────────────┘
-      </pre>
-    </div>
     
     <!-- Five Layers -->
     <div class="columns is-multiline mt-5">
