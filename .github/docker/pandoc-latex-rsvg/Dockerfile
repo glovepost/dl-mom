@@ -6,7 +6,6 @@ RUN apk add --no-cache \
     texlive-xetex \
     fontconfig \
     ttf-dejavu \
-    ttf-dejavu-sans-mono \
-    ttf-dejavu-serif \
-    ttf-liberation && \
+    ttf-liberation \
+    font-noto && \
     fc-cache -f
