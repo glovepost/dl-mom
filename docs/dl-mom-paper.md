@@ -104,46 +104,7 @@ DL-MoM consists of five interconnected components:
 4. **Latent Communication Bus** (belief + KV transfer, compression)
 5. **Contrastive Consensus Engine** (TIES-style merging of preferences)
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                             User Prompt                              │
-└───────────────────────────────┬──────────────────────────────────────┘
-                                │
-                                ▼
-                  ┌────────────────────┐
-                  │ Lookahead Router    │
-                  │ (perplexity probe)  │
-                  └─────────┬──────────┘
-                            │
-        ┌───────────────────┼───────────────────┐
-        │                   │                   │
-        ▼                   ▼                   ▼
- ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
- │  Expert A   │     │  Expert B   │     │  Expert C   │
- │ (Math/Logic)│     │ (Creativity)│     │  (Domain)   │
- └──────┬──────┘     └──────┬──────┘     └──────┬──────┘
-        │                   │                   │
-        ├───── Latent Bus: Soft Beliefs + KV (compressed) ───────┤
-        │                   │                   │
-        └───────────────────┼───────────────────┘
-                            │
-                            ▼
-              ┌────────────────────┐
-              │ Entropy Controller │
-              │ (trend + caps)     │
-              └─────────┬──────────┘
-                        │
-                        ▼
-              ┌────────────────────┐
-              │ Consensus Engine   │
-              │ (contrastive TIES) │
-              └─────────┬──────────┘
-                        │
-                        ▼
-                ┌────────────┐
-                │ Final Text │
-                └────────────┘
-```
+![DL-MoM architecture overview](../static/images/architecture.svg)
 
 ---
 
