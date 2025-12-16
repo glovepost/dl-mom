@@ -788,6 +788,9 @@ DL-MoM is a training-free architecture for latent-space collaboration among LLM 
 
 ## Appendix A: Comparison with Existing Approaches
 
+\\begin{center}
+\\begin{minipage}{0.9\\linewidth}
+
 | Feature | Text MAS | LatentMAS | InterLat | Soft Thinking | DL-MoM (Ours) |
 |---------|----------|-----------|----------|---------------|---------------|
 | Bandwidth | Low | High | High | Medium | High |
@@ -800,6 +803,9 @@ DL-MoM is a training-free architecture for latent-space collaboration among LLM 
 \* LatentMAS requires alignment estimation and does not provide a fully training-free heterogeneous protocol.
 
 † Requires compatible tokenizers; Text-Bridge fallback for mismatched vocabularies.
+
+\\end{minipage}
+\\end{center}
 
 ---
 
@@ -821,6 +827,10 @@ DL-MoM is a training-free architecture for latent-space collaboration among LLM 
 ---
 
 ## Appendix C: Python Implementation Sketch (Minimal)
+
+\\begin{center}
+\\begin{minipage}{0.9\\linewidth}
+\\small
 
 ```python
 import torch
@@ -879,10 +889,19 @@ class DeepLatentMoM(torch.nn.Module):
         return next_packet, next_kv_cache, avg_entropy
     ```
 
+\\end{minipage}
+\\end{center}
+
 ---
 
 ## Appendix D: Proof Sketches (Selected)
 
+\\begin{center}
+\\begin{minipage}{0.9\\linewidth}
+
 - **Top-k KL bound (Eq. 1).** For renormalized $\hat{p}_k$, $\text{KL}(\hat{p}_k\|p) = \log\frac{1}{1-\tau}$ follows from $\hat{p}_k = p/(1-\tau)$ on the support. Total variation $\tau$ gives the same bound via $\text{TV}(p,\hat{p}_k)=1-e^{-\text{KL}}$.
 - **Consensus deviation bound (§5.2).** Trim discards $|v_{i,j}|<\theta$; sign election partitions experts into agreeing sets. Merging within a sign set is an average, so deviation from the global mean is bounded by the maximal within-set deviation scaled by the conflict fraction $\rho$.
 - **Trend gate variance reduction (§5.4).** A windowed slope estimator over $w$ i.i.d. noise terms has variance $O(\sigma^2/w)$; substituting into a linear threshold test yields $O(\sqrt{w})$ lower false-positive probability vs. a single noisy entropy sample.
+
+\\end{minipage}
+\\end{center}
