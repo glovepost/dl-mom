@@ -748,19 +748,19 @@ DL-MoM is a training-free architecture for latent-space collaboration among LLM 
 
 [3] Shi, W., et al. (2025). *SwiReasoning: Switch-Thinking in Latent and Explicit for Pareto-Superior Reasoning LLMs.* https://swireasoning.github.io/
 
-[4] Anonymous. (2025). *Enabling Agents to Communicate Entirely in Latent Space.* arXiv:2511.09149.
+[4] *Enabling Agents to Communicate Entirely in Latent Space.* arXiv:2511.09149 (2025).
 
-[5] Anonymous. (2025). *LLMs are Single-threaded Reasoners: Demystifying the Working Mechanism of Soft Thinking.* arXiv:2508.03440.
+[5] *LLMs are Single-threaded Reasoners: Demystifying the Working Mechanism of Soft Thinking.* arXiv:2508.03440 (2025).
 
 [6] Zou, H., et al. (2025). *Latent Collaboration in Multi-Agent Systems.* arXiv:2511.20639.
 
-[7] Anonymous. (2025). *SIM-CoT: Supervised Implicit Chain-of-Thought.* OpenReview.
+[7] *SIM-CoT: Supervised Implicit Chain-of-Thought.* OpenReview (2025).
 
 [8] Zhang, A., et al. (2024). *MiniCache: KV Cache Compression in Depth Dimension for Large Language Models.* arXiv:2405.14366.
 
 [9] Liu, Z., et al. (2024). *KIVI: A Tuning-Free Asymmetric 2bit Quantization for KV Cache.* arXiv:2402.02750.
 
-[10] Anonymous. (2025). *ChunkKV: Semantic-Preserving KV Cache Compression for Efficient Long-Context LLM Inference.* arXiv:2502.00299.
+[10] *ChunkKV: Semantic-Preserving KV Cache Compression for Efficient Long-Context LLM Inference.* arXiv:2502.00299 (2025).
 
 [11] Yadav, P., et al. (2023). *TIES-Merging: Resolving Interference When Merging Models.* NeurIPS 2023.
 
@@ -774,7 +774,7 @@ DL-MoM is a training-free architecture for latent-space collaboration among LLM 
 
 [16] Shwartz-Ziv, R., & Tishby, N. (2017). *Opening the Black Box of Deep Neural Networks via Information.* arXiv:1703.00810.
 
-[17] Anonymous. (2024). *A Mathematical Theory of Top-k Sparse Attention via Total Variation Distance.* arXiv:2512.07647.
+[17] *A Mathematical Theory of Top-k Sparse Attention via Total Variation Distance.* arXiv:2512.07647 (2024).
 
 [18] Weiss, Y., & Freeman, W. T. (2001). *Correctness of Belief Propagation in Gaussian Graphical Models of Arbitrary Topology.* Neural Computation, 13(10), 2173–2200.
 
@@ -782,7 +782,7 @@ DL-MoM is a training-free architecture for latent-space collaboration among LLM 
 
 [20] Zhu, H., et al. (2025). *Reasoning by Superposition: A Theoretical Perspective on Chain of Continuous Thought.* arXiv:2505.12514.
 
-[21] Anonymous. (2024). *Spectral Structure of Task Vectors for Model Merging and Ensembling.* arXiv:2412.12153.
+[21] *Spectral Structure of Task Vectors for Model Merging and Ensembling.* arXiv:2412.12153 (2024).
 
 ---
 
