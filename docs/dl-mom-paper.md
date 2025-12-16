@@ -104,7 +104,7 @@ DL-MoM consists of five interconnected components:
 4. **Latent Communication Bus** (belief + KV transfer, compression)
 5. **Contrastive Consensus Engine** (TIES-style merging of preferences)
 
-![DL-MoM architecture overview](../static/images/architecture.svg)
+![DL-MoM architecture overview](static/images/architecture.svg)
 
 ---
 
@@ -230,29 +230,29 @@ DL-MoM requires no fine-tuning—only custom inference-time logic.
 Input: input_ids, experts[1..K], max_steps
 Output: final text
 
-1: packet ← InitPacket(input_ids)              // start with hard tokens
-2: kv_cache ← [None] × K
-3: entropy_window ← []
-4: switch_count ← 0
+1: packet = InitPacket(input_ids)              // start with hard tokens
+2: kv_cache = [None] * K
+3: entropy_window = []
+4: switch_count = 0
 
 5: for step = 1..max_steps:
-6:   outputs ← []
+6:   outputs = []
 7:   for i = 1..K:                             // parallel expert thinking
-8:     x_i ← ReconstructSoftInput(packet, expert_i)
-9:     y_i ← expert_i.forward(inputs_embeds=x_i, past_key_values=kv_cache[i])
-10:    H_i ← NormalizedEntropy(y_i.logits[-1])
+8:     x_i = ReconstructSoftInput(packet, expert_i)
+9:     y_i = expert_i.forward(inputs_embeds=x_i, past_key_values=kv_cache[i])
+10:    H_i = NormalizedEntropy(y_i.logits[-1])
 11:    outputs.append({logits=y_i.logits[-1], kv=y_i.kv, entropy=H_i})
 
-12:  H̄ ← mean_i(H_i); entropy_window.append(H̄)
+12:  H_avg = mean_i(H_i); entropy_window.append(H_avg)
 
 13:  if ControllerConverged(entropy_window, alpha, w, cap, switch_count):
 14:    break
 
-15:  merged ← ContrastiveTIES([o.logits for o in outputs], trim=θ)
-16:  packet ← BeliefPacketFromLogits(merged, top_k=k)
+15:  merged = ContrastiveTIES([o.logits for o in outputs], trim=theta)
+16:  packet = BeliefPacketFromLogits(merged, top_k=k)
 
 17:  if stochastic_soft:
-18:    packet ← GumbelOrDirichletPerturb(packet, tau, lambda)
+18:    packet = GumbelOrDirichletPerturb(packet, tau, lambda)
 
 19: return DecodeFinal(packet)
 ```
@@ -455,7 +455,7 @@ Compare each variant to a fixed reference pipeline (Unified Default, no compress
 - **Logits KL drift:** mean KL between next-token distributions at matched step indices
 - **Cosine drift:** cosine distance between logits vectors
 
-Count a drift event if drift exceeds a threshold for ≥M consecutive steps.
+Count a drift event if drift exceeds a threshold for >= M consecutive steps.
 
 **Failure modes (mandatory)**
 1. NaN/Inf in logits/entropy/embeddings
