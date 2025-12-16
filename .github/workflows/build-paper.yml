@@ -27,7 +27,7 @@ jobs:
       - name: Build PDF
         run: |
           mkdir -p static/pdfs
-          docker run --rm -v "$PWD:/data" --workdir /data pandoc/latex:3 sh -lc " \
+          docker run --rm --entrypoint /bin/sh -v "$PWD:/data" --workdir /data pandoc/latex:3 -lc " \
             apt-get update -qq && \
             apt-get install -y --no-install-recommends librsvg2-bin && \
             rm -rf /var/lib/apt/lists/* && \
