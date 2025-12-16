@@ -27,6 +27,7 @@ jobs:
       - name: Build pandoc image with rsvg + xelatex
         run: |
           docker build \
+            --no-cache \
             -f .github/docker/pandoc-latex-rsvg/Dockerfile \
             -t pandoc-latex-rsvg:local \
             .

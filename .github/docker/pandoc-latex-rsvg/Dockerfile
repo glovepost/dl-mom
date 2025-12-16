@@ -7,5 +7,6 @@ RUN apk add --no-cache \
     fontconfig \
     ttf-dejavu \
     ttf-liberation \
-    font-noto && \
+    font-noto \
+    font-noto-cjk && \
     fc-cache -f
