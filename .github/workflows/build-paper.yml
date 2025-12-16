@@ -27,10 +27,14 @@ jobs:
       - name: Build PDF
         run: |
           mkdir -p static/pdfs
-          docker run --rm -v "$PWD:/data" --workdir /data pandoc/latex:3 \
-            --from=gfm --pdf-engine=xelatex \
-            --output=static/pdfs/dl-mom-paper.pdf \
-            docs/dl-mom-paper.md
+          docker run --rm -v "$PWD:/data" --workdir /data pandoc/latex:3 sh -lc " \
+            apt-get update -qq && \
+            apt-get install -y --no-install-recommends librsvg2-bin && \
+            rm -rf /var/lib/apt/lists/* && \
+            pandoc --from=gfm --pdf-engine=xelatex \
+              --output=static/pdfs/dl-mom-paper.pdf \
+              docs/dl-mom-paper.md \
+          "
 
       - name: Upload PDF artifact
         uses: actions/upload-artifact@v4
