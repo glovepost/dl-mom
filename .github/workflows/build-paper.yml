@@ -28,7 +28,7 @@ jobs:
         run: |
           mkdir -p static/pdfs
           docker run --rm --entrypoint /bin/sh -v "$PWD:/data" --workdir /data pandoc/latex:3 -lc " \
-            apk add --no-cache librsvg && \
+            apk add --no-cache librsvg texlive-xetex && \
             pandoc --from=gfm --pdf-engine=xelatex \
               --output=static/pdfs/dl-mom-paper.pdf \
               docs/dl-mom-paper.md \
