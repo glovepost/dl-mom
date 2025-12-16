@@ -3,13 +3,18 @@ name: Build Paper PDF
 on:
   push:
     branches: [main]
+    paths:
+      - 'docs/dl-mom-paper.md'
+      - '.github/workflows/build-paper.yml'
   pull_request:
+    paths:
+      - 'docs/dl-mom-paper.md'
+      - '.github/workflows/build-paper.yml'
 
 jobs:
   build-pdf:
     name: Generate PDF from Markdown
     runs-on: ubuntu-latest
-    if: ${{ hashFiles('docs/dl-mom-paper.md') != '' }}
     permissions:
       contents: write
 
