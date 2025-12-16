@@ -1,6 +1,6 @@
 # Deep-Latent Mixture of Models: A Training-Free Architecture for System 2 Reasoning via Latent-Space Collaboration
 
-*Anonymous Authors*
+Lawrence Beckwith, OtherU
 
 ---
 
