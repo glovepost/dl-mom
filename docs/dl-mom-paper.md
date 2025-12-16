@@ -788,8 +788,8 @@ DL-MoM is a training-free architecture for latent-space collaboration among LLM 
 
 ## Appendix A: Comparison with Existing Approaches
 
-\\begin{center}
-\\begin{minipage}{0.9\\linewidth}
+<div style="display:flex;justify-content:center;">
+<div style="max-width:90%;">
 
 | Feature | Text MAS | LatentMAS | InterLat | Soft Thinking | DL-MoM (Ours) |
 |---------|----------|-----------|----------|---------------|---------------|
@@ -804,8 +804,8 @@ DL-MoM is a training-free architecture for latent-space collaboration among LLM 
 
 † Requires compatible tokenizers; Text-Bridge fallback for mismatched vocabularies.
 
-\\end{minipage}
-\\end{center}
+</div>
+</div>
 
 ---
 
@@ -828,9 +828,8 @@ DL-MoM is a training-free architecture for latent-space collaboration among LLM 
 
 ## Appendix C: Python Implementation Sketch (Minimal)
 
-\\begin{center}
-\\begin{minipage}{0.9\\linewidth}
-\\small
+<div style="display:flex;justify-content:center;">
+<div style="max-width:90%;">
 
 ```python
 import torch
@@ -887,21 +886,21 @@ class DeepLatentMoM(torch.nn.Module):
         avg_entropy = torch.stack([o[2] for o in outputs]).mean()
         next_kv_cache = [o[1] for o in outputs]
         return next_packet, next_kv_cache, avg_entropy
-    ```
+```
 
-\\end{minipage}
-\\end{center}
+</div>
+</div>
 
 ---
 
 ## Appendix D: Proof Sketches (Selected)
 
-\\begin{center}
-\\begin{minipage}{0.9\\linewidth}
+<div style="display:flex;justify-content:center;">
+<div style="max-width:90%;">
 
 - **Top-k KL bound (Eq. 1).** For renormalized $\hat{p}_k$, $\text{KL}(\hat{p}_k\|p) = \log\frac{1}{1-\tau}$ follows from $\hat{p}_k = p/(1-\tau)$ on the support. Total variation $\tau$ gives the same bound via $\text{TV}(p,\hat{p}_k)=1-e^{-\text{KL}}$.
 - **Consensus deviation bound (§5.2).** Trim discards $|v_{i,j}|<\theta$; sign election partitions experts into agreeing sets. Merging within a sign set is an average, so deviation from the global mean is bounded by the maximal within-set deviation scaled by the conflict fraction $\rho$.
 - **Trend gate variance reduction (§5.4).** A windowed slope estimator over $w$ i.i.d. noise terms has variance $O(\sigma^2/w)$; substituting into a linear threshold test yields $O(\sqrt{w})$ lower false-positive probability vs. a single noisy entropy sample.
 
-\\end{minipage}
-\\end{center}
+</div>
+</div>
