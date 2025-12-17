@@ -153,7 +153,7 @@
       <p>
         Our framework integrates insights from recent advances in latent reasoning (Soft Thinking, Coconut), 
         adaptive computation (SwiReasoning), multi-agent collaboration (LatentMAS), and training-free KV-cache 
-        compression (KIVI, MiniCache). We introduce three key innovations: (1) a <strong>Sparse Belief Packet protocol</strong> 
+        compression for per-expert context retention (KIVI, MiniCache). We introduce three key innovations: (1) a <strong>Sparse Belief Packet protocol</strong> 
         enabling cross-model communication without alignment matrices, (2) a <strong>trend-based entropy controller</strong> 
         for dynamic switching between exploration and exploitation modes, and (3) a <strong>TIES-Merging consensus engine</strong> 
         that combines expert outputs in latent space.
@@ -216,7 +216,7 @@
       <div class="column is-6">
         <div class="box component-box">
           <h4 class="title is-5"><i class="fas fa-network-wired has-text-warning"></i> Layer 4: Latent Communication Bus</h4>
-          <p>Transmits KV-caches between experts using <strong>KIVI 2-bit quantization</strong> + <strong>MiniCache</strong> for 85-90% compression.</p>
+          <p>Maintains per-expert KV state across latent steps and applies <strong>KIVI</strong> + <strong>MiniCache</strong> for efficient retention. For heterogeneous KV-cache transfer, a learned <a href="https://arxiv.org/abs/2510.03215" target="_blank"><strong>Cache-to-Cache (C2C)</strong></a> projector can be used (not training-free).</p>
         </div>
       </div>
       <div class="column is-12">
@@ -271,6 +271,16 @@
           <p class="is-size-6">
             Normalized entropy trends reduce false stopping decisions and switch-count caps
             bound oscillation, keeping adaptive computation stable and compute-bounded.
+          </p>
+        </div>
+      </div>
+      <div class="column is-6">
+        <div class="box">
+          <h4 class="title is-5">Overhead</h4>
+          <p class="is-size-6">
+            Soft embedding reconstruction \(e_{\text{soft}}=\sum_{i\in\text{top-}k}p_iE[t_i]\) costs \(O(kd)\)
+            per expert per latent step (gather + weighted sum) and is typically small compared to a transformer
+            forward pass for modest \(k\) (e.g., \(k\approx 50\)).
           </p>
         </div>
       </div>
@@ -566,9 +576,9 @@ def contrastive_ties_merge(logit_list, trim_thresh=0.1):
         <div class="box">
           <h4 class="title is-5"><i class="fas fa-cogs has-text-info"></i> Infrastructure</h4>
           <ul>
-            <li><strong>Inference:</strong> vLLM</li>
+            <li><strong>Inference:</strong> Transformers / vLLM (optional)</li>
             <li><strong>Compression:</strong> KIVI / bitsandbytes</li>
-            <li><strong>Merging:</strong> MergeKit</li>
+            <li><strong>Consensus:</strong> runtime tensor ops (no parameter merge)</li>
           </ul>
         </div>
       </div>
@@ -598,6 +608,7 @@ def contrastive_ties_merge(logit_list, trim_thresh=0.1):
             <li><strong>Tokenizer Compatibility:</strong> DL-MoM V1 requires models with compatible tokenizers 
             (e.g., all Llama-3 derivatives, or Mistral/Llama mixes that share vocabulary). For mismatched tokenizers, 
             a <strong>Text-Bridge Fallback</strong> decodes top-1 to text for re-encoding, preserving architecture but losing "soft" information.</li>
+            <li><strong>Heterogeneous KV Transfer:</strong> Cross-architecture KV-cache transfer requires learned bridging (e.g., <a href="https://arxiv.org/abs/2510.03215" target="_blank">C2C</a>) and is not training-free; DL-MoM’s core guarantees apply to belief routing + consensus + controller + compression.</li>
             <li><strong>Memory Overhead:</strong> Despite KIVI compression, maintaining KV-caches for multiple 7B experts 
             requires ≥24GB VRAM. Consumer deployment limited to 2-3 experts.</li>
             <li><strong>Empirical Validation:</strong> This paper presents architecture and theoretical analysis. 
@@ -644,6 +655,7 @@ def contrastive_ties_merge(logit_list, trim_thresh=0.1):
         <a href="https://swireasoning.github.io/">SwiReasoning</a>, 
         <a href="https://arxiv.org/abs/2511.20639">LatentMAS</a>, 
         <a href="https://arxiv.org/abs/2511.09149">InterLat</a>, 
+        <a href="https://arxiv.org/abs/2510.03215">Cache-to-Cache (C2C)</a>,
         <a href="https://arxiv.org/abs/2402.02750">KIVI</a>, 
         <a href="https://arxiv.org/abs/2405.14366">MiniCache</a>, and 
         <a href="https://proceedings.neurips.cc/paper_files/paper/2023/hash/1644c9af28ab7916874f6fd6f55f7b49-Abstract-Conference.html">TIES-Merging</a>.
