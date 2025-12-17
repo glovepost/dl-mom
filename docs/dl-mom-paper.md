@@ -6,7 +6,7 @@ Lawrence Beckwith, OtherU
 
 ## Abstract
 
-We present **Deep-Latent Mixture of Models (DL-MoM)**, a training-free architecture that enables multiple large language models to collaborate **primarily in latent space**, approximating System 2–style reasoning without fine-tuning. Unlike traditional mixture-of-experts systems that route discrete text tokens, DL-MoM routes **probabilistic belief representations**—**Soft Belief Packets**—between expert models and performs consensus directly over latent preferences. DL-MoM integrates (i) **probabilistic latent reasoning** (Soft Thinking, Coconut), (ii) **adaptive computation** (SwiReasoning) via trend-based entropy switching, (iii) **multi-agent latent collaboration** (LatentMAS, InterLat) while replacing learned alignment/bridge components with training-free alternatives, and (iv) **training-free KV-cache compression** (KIVI, MiniCache) for efficient cross-agent context transfer. We introduce three key innovations: (1) a **Sparse Belief Packet** protocol enabling cross-model latent communication without learned alignment matrices, (2) a **trend-based entropy controller** with switch-count controls for stable dynamic switching between exploration and exploitation, and (3) a **contrastive TIES-style consensus engine** that merges expert preferences in latent space. We provide an implementation blueprint compatible with off-the-shelf models (e.g., Qwen-2.5, Llama-3) and a reproducible experimental protocol with ablation registries and runner tooling.
+We present **Deep-Latent Mixture of Models (DL-MoM)**, a training-free architecture that enables multiple large language models to collaborate **primarily in latent space**, approximating System 2–style reasoning without fine-tuning. Unlike traditional mixture-of-experts systems that route discrete text tokens, DL-MoM routes **probabilistic belief representations**—**Soft Belief Packets**—between expert models and performs consensus directly over latent preferences. DL-MoM integrates (i) **probabilistic latent reasoning** (Soft Thinking, Coconut), (ii) **adaptive computation** (SwiReasoning) via trend-based entropy switching, (iii) **multi-agent latent collaboration** (LatentMAS, InterLat) while replacing learned alignment/bridge components with training-free alternatives, and (iv) **training-free KV-cache compression** (KIVI, MiniCache) for efficient *per-expert* context retention. We introduce three key innovations: (1) a **Sparse Belief Packet** protocol enabling cross-model latent communication without learned alignment matrices, (2) a **trend-based entropy controller** with switch-count controls for stable dynamic switching between exploration and exploitation, and (3) a **contrastive TIES-style consensus engine** that merges expert preferences in latent space. We provide an implementation blueprint compatible with off-the-shelf models (e.g., Qwen-2.5, Llama-3) and a reproducible experimental protocol with ablation registries and runner tooling. We further discuss how *optional* learned cache-to-cache (C2C) projectors can enable KV transfer across heterogeneous architectures, but this extension is not training-free.
 
 ---
 
@@ -101,7 +101,7 @@ DL-MoM consists of five interconnected components:
 1. **Lookahead Latent Router** (training-free expert selection)
 2. **Soft Thinking Engines** (belief generation)
 3. **Trend-Based Entropy Controller** (adaptive switching)
-4. **Latent Communication Bus** (belief + KV transfer, compression)
+4. **Latent Communication Bus** (belief exchange; optional KV transfer; compression)
 5. **Contrastive Consensus Engine** (TIES-style merging of preferences)
 
 ![DL-MoM architecture overview](static/images/architecture.svg)
@@ -175,11 +175,23 @@ Maintain a sliding window of recent entropies and compute:
 
 ---
 
-### 3.5 Layer 4: Latent Communication Bus (Beliefs + KV Transfer)
+### 3.5 Layer 4: Latent Communication Bus (Beliefs + KV State)
 
 Agents communicate through:
 1. **belief packets** (semantic preferences), and optionally
-2. **KV caches** (working memory / context), compressed for feasibility.
+2. **KV state reuse/transfer** (working memory / context), compressed for feasibility.
+
+#### 3.5.1 What Is Training-Free: Local KV Reuse + Compression
+
+KV caches are model-internal attention state. In DL-MoM’s training-free core, each expert maintains and reuses *its own* KV cache across latent steps (i.e., `past_key_values` within that expert), and optionally compresses it (KIVI/MiniCache) to reduce memory bandwidth and allow longer internal rollouts.
+
+This is distinct from *cross-model KV transfer*: no attempt is made to interpret another model’s KV cache as raw bytes.
+
+#### 3.5.2 Optional Extension: Learned Cache-to-Cache (C2C) Projection for Heterogeneous Transfer
+
+Direct KV transfer between heterogeneous models (different hidden sizes, head counts, RoPE conventions, or architectures) is not meaningful without bridging. A practical approach is a lightweight **cache-to-cache (C2C) projector**: a small learned adapter that maps the source model’s per-layer key/value tensors into the target model’s KV space, typically with gating to avoid semantic clashes. This requires freezing base models and training only the projector on a small alignment dataset; it is therefore **not training-free**.
+
+If avoiding pairwise projectors, a “universal latent” design can be used: each model learns an encoder to a canonical KV format and a decoder back to its own format (reducing pairwise $O(N^2)$ adapters). For intra-family models (same tokenizer and similar attention geometry), simpler linear alignment or layer-wise stitching is often sufficient, but still involves learned or estimated alignment parameters.
 
 #### Training-Free KV Compression Stack
 
@@ -262,6 +274,7 @@ Output: final text
 - **Detaching latent buffers:** store belief packets in fp16/bf16 and detach to avoid memory growth.
 - **Positions:** when using `inputs_embeds` with `past_key_values`, ensure correct `position_ids` (cumulative length including cached tokens).
 - **Tokenizer compatibility:** belief packets assume compatible vocabularies; otherwise use Text-Bridge Fallback.
+- **KV transfer scope:** KV caches are only directly reusable within the *same* model instance/configuration. Heterogeneous KV transfer requires an explicit learned projector (C2C) or should be disabled in favor of belief/text bridging.
 
 ### 4.3 Recommended Stack
 
@@ -456,6 +469,8 @@ Compare each variant to a fixed reference pipeline (Unified Default, no compress
 - **Cosine drift:** cosine distance between logits vectors
 
 Count a drift event if drift exceeds a threshold for >= M consecutive steps.
+
+If enabling any learned KV projection (C2C), report drift both (i) versus the no-transfer reference and (ii) versus a same-model KV reuse baseline, since the projector can introduce systematic bias.
 
 **Failure modes (mandatory)**
 1. NaN/Inf in logits/entropy/embeddings
@@ -723,6 +738,7 @@ For `--batch-size auto`, the runner should probe batch size and record the chose
 
 * **Tokenizer dependency.** Soft Belief Packets require compatible vocabularies. Text-Bridge fallback preserves structure but reduces soft information on incompatible links.
 * **Memory overhead.** Maintaining KV caches for multiple experts remains expensive; practical deployment on consumer GPUs may require aggressive quantization and limiting expert count.
+* **Heterogeneous KV transfer is not training-free.** Cross-architecture KV-cache transfer requires learned bridging (e.g., cache-to-cache projection) or must be restricted to intra-family settings where lightweight alignment suffices. DL-MoM’s training-free guarantee applies to belief routing + consensus + controller + compression, not to heterogeneous KV transfer.
 * **Evaluation scope.** This paper provides architecture + protocol + reproducibility tooling. Full empirical validation is defined but not yet reported here.
 
 ### 8.2 Future Directions
