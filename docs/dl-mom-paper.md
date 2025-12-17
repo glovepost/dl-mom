@@ -189,7 +189,7 @@ This is distinct from *cross-model KV transfer*: no attempt is made to interpret
 
 #### 3.5.2 Optional Extension: Learned Cache-to-Cache (C2C) Projection for Heterogeneous Transfer
 
-Direct KV transfer between heterogeneous models (different hidden sizes, head counts, RoPE conventions, or architectures) is not meaningful without bridging. A practical approach is a lightweight **cache-to-cache (C2C) projector**: a small learned adapter that maps the source model’s per-layer key/value tensors into the target model’s KV space, typically with gating to avoid semantic clashes. This requires freezing base models and training only the projector on a small alignment dataset; it is therefore **not training-free**.
+Direct KV transfer between heterogeneous models (different hidden sizes, head counts, RoPE conventions, or architectures) is not meaningful without bridging. A practical approach is a lightweight **cache-to-cache (C2C) projector**: a small learned adapter that maps the source model’s per-layer key/value tensors into the target model’s KV space, typically with gating to avoid semantic clashes [22]. This requires freezing base models and training only the projector on a small alignment dataset; it is therefore **not training-free**.
 
 If avoiding pairwise projectors, a “universal latent” design can be used: each model learns an encoder to a canonical KV format and a decoder back to its own format (reducing pairwise $O(N^2)$ adapters). For intra-family models (same tokenizer and similar attention geometry), simpler linear alignment or layer-wise stitching is often sufficient, but still involves learned or estimated alignment parameters.
 
@@ -799,6 +799,8 @@ DL-MoM is a training-free architecture for latent-space collaboration among LLM 
 [20] Zhu, H., et al. (2025). *Reasoning by Superposition: A Theoretical Perspective on Chain of Continuous Thought.* arXiv:2505.12514.
 
 [21] *Spectral Structure of Task Vectors for Model Merging and Ensembling.* arXiv:2412.12153 (2024).
+
+[22] Fu, T., Min, Z., Zhang, H., Yan, J., Dai, G., Ouyang, W., & Wang, Y. (2025). *Cache-to-Cache: Direct Semantic Communication Between Large Language Models.* arXiv:2510.03215.
 
 ---
 
