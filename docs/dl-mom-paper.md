@@ -800,7 +800,7 @@ DL-MoM is a training-free architecture for latent-space collaboration among LLM 
 
 [21] *Spectral Structure of Task Vectors for Model Merging and Ensembling.* arXiv:2412.12153 (2024).
 
-[22] Fu, T., Min, Z., Zhang, H., Yan, J., Dai, G., Ouyang, W., & Wang, Y. (2025). *Cache-to-Cache: Direct Semantic Communication Between Large Language Models.* arXiv:2510.03215.
+[22] Fu, T., Min, Z., Zhang, H., Yan, J., Dai, G., Ouyang, W., & Wang, Y. (2025). *Cache-to-Cache: Direct Semantic Communication Between Large Language Models.* arXiv:2510.03215. https://github.com/thu-nics/C2C
 
 ---
 
