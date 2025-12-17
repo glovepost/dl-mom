@@ -35,7 +35,7 @@ jobs:
         run: |
           mkdir -p static/pdfs
           docker run --rm -v "$PWD:/data" --workdir /data pandoc-latex-rsvg:local \
-            --from=gfm --pdf-engine=xelatex \
+            --from=markdown+tex_math_dollars --pdf-engine=xelatex \
             --output=static/pdfs/dl-mom-paper.pdf \
             docs/dl-mom-paper.md
 

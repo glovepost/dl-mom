@@ -127,7 +127,7 @@ Each expert generates **beliefs** rather than committing to discrete tokens at e
 
 #### Soft Belief Packet Protocol (Sparse Belief Packets)
 
-A major barrier to heterogeneous latent communication is representational mismatch. Even if models share a tokenizer, their embedding matrices differ. Transmitting raw embeddings from model A to model B is generally meaningless.
+A major barrier to heterogeneous latent communication is representational mismatch. Even if models share a tokenizer, their embedding matrices differ. Transmitting raw embeddings from model A to model B is not meaningful in general.
 
 DL-MoM transmits a **Soft Belief Packet**:
 
@@ -183,13 +183,13 @@ Agents communicate through:
 
 #### 3.5.1 What Is Training-Free: Local KV Reuse + Compression
 
-KV caches are model-internal attention state. In DL-MoM’s training-free core, each expert maintains and reuses *its own* KV cache across latent steps (i.e., `past_key_values` within that expert), and optionally compresses it (KIVI/MiniCache) to reduce memory bandwidth and allow longer internal rollouts.
+KV caches are model-internal attention state. In DL-MoM’s training-free core, each expert maintains and reuses *its own* KV cache across latent steps (i.e., `past_key_values` within that expert), and optionally compresses it (KIVI/MiniCache) to reduce memory bandwidth and enable longer internal rollouts.
 
-This is distinct from *cross-model KV transfer*: no attempt is made to interpret another model’s KV cache as raw bytes.
+This is distinct from *cross-model KV transfer*: no attempt is made to perform byte-wise cache copying between heterogeneous models.
 
 #### 3.5.2 Optional Extension: Learned Cache-to-Cache (C2C) Projection for Heterogeneous Transfer
 
-Direct KV transfer between heterogeneous models (different hidden sizes, head counts, RoPE conventions, or architectures) is not meaningful without bridging. A practical approach is a lightweight **cache-to-cache (C2C) projector**: a small learned adapter that maps the source model’s per-layer key/value tensors into the target model’s KV space, typically with gating to avoid semantic clashes [22]. This requires freezing base models and training only the projector on a small alignment dataset; it is therefore **not training-free**.
+Direct KV transfer between heterogeneous models (different hidden sizes, head counts, RoPE conventions, or architectures) is not meaningful without bridging. A practical approach is a lightweight **cache-to-cache (C2C) projector**: a small learned adapter that maps the source model’s per-layer key/value tensors into the target model’s KV space, typically with gating to mitigate semantic interference [22]. This requires freezing base models and training only the projector on a small alignment dataset; it is therefore **not training-free**.
 
 If avoiding pairwise projectors, a “universal latent” design can be used: each model learns an encoder to a canonical KV format and a decoder back to its own format (reducing pairwise $O(N^2)$ adapters). For intra-family models (same tokenizer and similar attention geometry), simpler linear alignment or layer-wise stitching is often sufficient, but still involves learned or estimated alignment parameters.
 
@@ -275,6 +275,7 @@ Output: final text
 - **Positions:** when using `inputs_embeds` with `past_key_values`, ensure correct `position_ids` (cumulative length including cached tokens).
 - **Tokenizer compatibility:** belief packets assume compatible vocabularies; otherwise use Text-Bridge Fallback.
 - **KV transfer scope:** KV caches are only directly reusable within the *same* model instance/configuration. Heterogeneous KV transfer requires an explicit learned projector (C2C) or should be disabled in favor of belief/text bridging.
+- **Overhead (soft embedding reconstruction):** reconstructing $e_{\text{soft}}=\sum_{i \in \text{top-}k} p_i\,E[t_i]$ has cost $O(kd)$ per expert per latent step (embedding gather + weighted sum). For a representative setting ($k=50$, $d=4096$), this corresponds to $\approx 0.4$ MFLOPs and $\approx 0.4$ MB of embedding reads in fp16. Relative to a transformer forward step, this overhead is typically small; in many implementations, `topk` selection and the expert forward dominate end-to-end latency. To minimize overhead, keep `ids/probs` on-device and implement gather+sum as a single GPU operation where possible.
 
 ### 4.3 Recommended Stack
 
@@ -295,11 +296,11 @@ Output: final text
 
 ### 5.1 Information-Theoretic Foundation (Belief Packets)
 
-We view belief packets through the information bottleneck lens [15, 16]. Let $p$ be the full next-token distribution and $\hat{p}_k$ the top-$k$ renormalization with tail mass $\tau = 1 - \sum_{i \in \text{top-}k} p_i$. The sharp KL bound
+We view belief packets through the information bottleneck lens [15, 16]. Let $p$ be the full next-token distribution and $\hat{p}_k$ the top-$k$ renormalization with tail mass $\tau = 1 - \sum_{i \in \text{top-}k} p_i$. The identity
 
 $$\text{KL}(\hat{p}_k \| p) = -\log(1-\tau) \tag{1}$$
 
-implies negligible information loss when $\tau$ is small (e.g., $\tau<0.05 \Rightarrow \text{KL}<0.051$ nats) [17]. This formalizes why belief packets retain uncertainty that argmax messaging discards. When tokenizers are shared, $\hat{p}_k$ remains a sufficient statistic for high-mass preferences, and reconstructed embeddings $\tilde{e}=\sum_i p_i E[t_i]$ stay in-distribution for the receiver’s embedding space.
+quantifies truncation distortion in terms of discarded mass. When $\tau$ is small (e.g., $\tau<0.05 \Rightarrow \text{KL}<0.051$ nats), the renormalized top-$k$ distribution remains close to the original in KL divergence [17]. This supports belief packets as a bandwidth-limited representation that preserves uncertainty structure compared to argmax messaging. When tokenizers are shared, reconstructed embeddings $\tilde{e}=\sum_i p_i E[t_i]$ lie in the convex hull of the receiver’s token embeddings, remaining in-distribution by construction.
 
 ### 5.2 Consensus Stability and Convergence
 
@@ -790,7 +791,7 @@ DL-MoM is a training-free architecture for latent-space collaboration among LLM 
 
 [16] Shwartz-Ziv, R., & Tishby, N. (2017). *Opening the Black Box of Deep Neural Networks via Information.* arXiv:1703.00810.
 
-[17] *A Mathematical Theory of Top-k Sparse Attention via Total Variation Distance.* arXiv:2512.07647 (2024).
+[17] *A Mathematical Theory of Top-k Sparse Attention via Total Variation Distance.* arXiv:2512.07647 (2025).
 
 [18] Weiss, Y., & Freeman, W. T. (2001). *Correctness of Belief Propagation in Gaussian Graphical Models of Arbitrary Topology.* Neural Computation, 13(10), 2173–2200.
 
@@ -806,8 +807,9 @@ DL-MoM is a training-free architecture for latent-space collaboration among LLM 
 
 ## Appendix A: Comparison with Existing Approaches
 
-<div style="display:flex;justify-content:center;">
-<div style="max-width:90%;">
+\begingroup
+\setlength\LTleft{\fill}
+\setlength\LTright{\fill}
 
 | Feature | Text MAS | LatentMAS | InterLat | Soft Thinking | DL-MoM (Ours) |
 |---------|----------|-----------|----------|---------------|---------------|
@@ -822,8 +824,7 @@ DL-MoM is a training-free architecture for latent-space collaboration among LLM 
 
 † Requires compatible tokenizers; Text-Bridge fallback for mismatched vocabularies.
 
-</div>
-</div>
+\endgroup
 
 ---
 
@@ -846,8 +847,8 @@ DL-MoM is a training-free architecture for latent-space collaboration among LLM 
 
 ## Appendix C: Python Implementation Sketch (Minimal)
 
-<div style="display:flex;justify-content:center;">
-<div style="max-width:90%;">
+\begingroup
+\footnotesize
 
 ```python
 import torch
@@ -906,19 +907,14 @@ class DeepLatentMoM(torch.nn.Module):
         return next_packet, next_kv_cache, avg_entropy
 ```
 
-</div>
-</div>
+\endgroup
 
 ---
 
 ## Appendix D: Proof Sketches (Selected)
 
-<div style="display:flex;justify-content:center;">
-<div style="max-width:90%;">
-
-- **Top-k KL bound (Eq. 1).** For renormalized $\hat{p}_k$, $\text{KL}(\hat{p}_k\|p) = \log\frac{1}{1-\tau}$ follows from $\hat{p}_k = p/(1-\tau)$ on the support. Total variation $\tau$ gives the same bound via $\text{TV}(p,\hat{p}_k)=1-e^{-\text{KL}}$.
-- **Consensus deviation bound (§5.2).** Trim discards $|v_{i,j}|<\theta$; sign election partitions experts into agreeing sets. Merging within a sign set is an average, so deviation from the global mean is bounded by the maximal within-set deviation scaled by the conflict fraction $\rho$.
-- **Trend gate variance reduction (§5.4).** A windowed slope estimator over $w$ i.i.d. noise terms has variance $O(\sigma^2/w)$; substituting into a linear threshold test yields $O(\sqrt{w})$ lower false-positive probability vs. a single noisy entropy sample.
-
-</div>
-</div>
+- **Top-k KL bound (Eq. 1).** For the renormalized top-$k$ truncation $\hat{p}_k$ with tail mass $\tau$, the divergence admits the closed form
+  $$\mathrm{KL}(\hat{p}_k\|p)=\log\frac{1}{1-\tau},$$
+  since $\hat{p}_k = p/(1-\tau)$ on its support. This can be related to total variation via $\mathrm{TV}(p,\hat{p}_k)=1-e^{-\mathrm{KL}}$.
+- **Consensus deviation bound (§5.2).** Trimming sets $|v_{i,j}|<\theta$ to zero, and sign election partitions experts into sign-consistent sets. Disjoint merging averages within each set, yielding a deviation bound controlled by within-set dispersion and the fraction of sign conflicts $\rho$.
+- **Trend gate variance reduction (§5.4).** Under an additive-noise model $H_t = H^{\ast}+\epsilon_t$ with i.i.d. $\epsilon_t$, a windowed slope estimator over $w$ steps has variance $O(\sigma^2/w)$, reducing premature stopping relative to a single-sample threshold test.
