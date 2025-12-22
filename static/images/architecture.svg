@@ -1,20 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 650">
   <defs>
     <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#667eea"/>
-      <stop offset="100%" style="stop-color:#764ba2"/>
+      <stop offset="0%" style="stop-color:#0ca7b3"/>
+      <stop offset="100%" style="stop-color:#007b7f"/>
     </linearGradient>
     <linearGradient id="expertGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#4facfe"/>
-      <stop offset="100%" style="stop-color:#00f2fe"/>
+      <stop offset="0%" style="stop-color:#f8fbfd"/>
+      <stop offset="100%" style="stop-color:#a8e0ec"/>
     </linearGradient>
     <linearGradient id="controllerGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#43e97b"/>
-      <stop offset="100%" style="stop-color:#38f9d7"/>
+      <stop offset="0%" style="stop-color:#007b7f"/>
+      <stop offset="100%" style="stop-color:#0ca7b3"/>
     </linearGradient>
     <linearGradient id="consensusGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#fa709a"/>
-      <stop offset="100%" style="stop-color:#fee140"/>
+      <stop offset="0%" style="stop-color:#007b7f"/>
+      <stop offset="100%" style="stop-color:#1a2e35"/>
     </linearGradient>
     <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
       <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.2"/>
@@ -22,123 +22,123 @@
   </defs>
   
   <!-- Background -->
-  <rect width="900" height="650" fill="#f8f9fa"/>
+  <rect width="900" height="650" fill="#f8fbfd"/>
   
   <!-- Title -->
-  <text x="450" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#333">
+  <text x="450" y="35" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#1a2e35">
     Deep-Latent Mixture of Models (DL-MoM) Architecture
   </text>
   
   <!-- User Prompt -->
   <rect x="325" y="55" width="250" height="40" rx="8" fill="url(#headerGrad)" filter="url(#shadow)"/>
-  <text x="450" y="80" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="white" font-weight="bold">User Prompt</text>
+  <text x="450" y="80" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#f8fbfd" font-weight="bold">User Prompt</text>
   
   <!-- Arrow down -->
-  <path d="M450 95 L450 115 L445 110 M450 115 L455 110" stroke="#666" stroke-width="2" fill="none"/>
+  <path d="M450 95 L450 115 L445 110 M450 115 L455 110" stroke="#1a2e35" stroke-width="2" fill="none"/>
   
   <!-- Embedding Layer -->
-  <rect x="350" y="120" width="200" height="35" rx="6" fill="#e9ecef" stroke="#dee2e6" stroke-width="2"/>
-  <text x="450" y="143" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#495057">Embedding Layer</text>
+  <rect x="350" y="120" width="200" height="35" rx="6" fill="#f8fbfd" stroke="#60d0e8" stroke-width="2"/>
+  <text x="450" y="143" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1a2e35">Embedding Layer</text>
   
   <!-- Arrow down -->
-  <path d="M450 155 L450 175 L445 170 M450 175 L455 170" stroke="#666" stroke-width="2" fill="none"/>
+  <path d="M450 155 L450 175 L445 170 M450 175 L455 170" stroke="#1a2e35" stroke-width="2" fill="none"/>
   
   <!-- Lookahead Router -->
-  <rect x="300" y="180" width="300" height="45" rx="8" fill="#fff3cd" stroke="#ffc107" stroke-width="2" filter="url(#shadow)"/>
-  <text x="450" y="200" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#856404">Layer 1: Lookahead Latent Router</text>
-  <text x="450" y="215" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#856404">Predicts optimal expert manifolds</text>
+  <rect x="300" y="180" width="300" height="45" rx="8" fill="#a8e0ec" stroke="#0ca7b3" stroke-width="2" filter="url(#shadow)"/>
+  <text x="450" y="200" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#007b7f">Layer 1: Lookahead Latent Router</text>
+  <text x="450" y="215" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#1a2e35">Predicts optimal expert manifolds</text>
   
   <!-- Arrows to experts -->
-  <path d="M350 225 L200 265" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
-  <path d="M450 225 L450 265" stroke="#666" stroke-width="2" fill="none"/>
-  <path d="M550 225 L700 265" stroke="#666" stroke-width="2" fill="none"/>
+  <path d="M350 225 L200 265" stroke="#1a2e35" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M450 225 L450 265" stroke="#1a2e35" stroke-width="2" fill="none"/>
+  <path d="M550 225 L700 265" stroke="#1a2e35" stroke-width="2" fill="none"/>
   
   <!-- Expert boxes -->
   <!-- Expert A -->
   <rect x="100" y="270" width="200" height="80" rx="10" fill="url(#expertGrad)" filter="url(#shadow)"/>
-  <text x="200" y="295" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="white">Expert A</text>
-  <text x="200" y="315" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="white">Logic / Math</text>
-  <text x="200" y="335" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="rgba(255,255,255,0.8)">Qwen-Math-7B</text>
+  <text x="200" y="295" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#1a2e35">Expert A</text>
+  <text x="200" y="315" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a2e35">Logic / Math</text>
+  <text x="200" y="335" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="rgba(26, 46, 53, 0.72)">Qwen-Math-7B</text>
   
   <!-- Expert B -->
   <rect x="350" y="270" width="200" height="80" rx="10" fill="url(#expertGrad)" filter="url(#shadow)"/>
-  <text x="450" y="295" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="white">Expert B</text>
-  <text x="450" y="315" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="white">General Reasoning</text>
-  <text x="450" y="335" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="rgba(255,255,255,0.8)">Llama-3.1-8B</text>
+  <text x="450" y="295" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#1a2e35">Expert B</text>
+  <text x="450" y="315" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a2e35">General Reasoning</text>
+  <text x="450" y="335" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="rgba(26, 46, 53, 0.72)">Llama-3.1-8B</text>
   
   <!-- Expert C -->
   <rect x="600" y="270" width="200" height="80" rx="10" fill="url(#expertGrad)" filter="url(#shadow)"/>
-  <text x="700" y="295" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="white">Expert C</text>
-  <text x="700" y="315" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="white">Code Generation</text>
-  <text x="700" y="335" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="rgba(255,255,255,0.8)">DeepSeek-Coder-7B</text>
+  <text x="700" y="295" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#1a2e35">Expert C</text>
+  <text x="700" y="315" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a2e35">Code Generation</text>
+  <text x="700" y="335" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="rgba(26, 46, 53, 0.72)">DeepSeek-Coder-7B</text>
   
   <!-- Bidirectional arrows between experts -->
-  <path d="M300 310 L350 310" stroke="#17a2b8" stroke-width="3" stroke-dasharray="5,3"/>
-  <path d="M550 310 L600 310" stroke="#17a2b8" stroke-width="3" stroke-dasharray="5,3"/>
+  <path d="M300 310 L350 310" stroke="#0ca7b3" stroke-width="3" stroke-dasharray="5,3"/>
+  <path d="M550 310 L600 310" stroke="#0ca7b3" stroke-width="3" stroke-dasharray="5,3"/>
   
   <!-- Latent Bus -->
-  <rect x="100" y="360" width="700" height="35" rx="6" fill="#d1ecf1" stroke="#17a2b8" stroke-width="2"/>
-  <text x="450" y="382" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#0c5460">
+  <rect x="100" y="360" width="700" height="35" rx="6" fill="#60d0e8" stroke="#0ca7b3" stroke-width="2"/>
+  <text x="450" y="382" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#1a2e35">
     Layer 4: Latent Communication Bus (KIVI 2-bit + MiniCache) — 85-90% Compression
   </text>
   
   <!-- Soft Belief Packet annotation -->
-  <rect x="680" y="230" width="140" height="50" rx="6" fill="#e2e3e5" stroke="#6c757d" stroke-width="1"/>
-  <text x="750" y="250" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#495057">Soft Belief Packet</text>
-  <text x="750" y="265" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#6c757d">(top-k IDs, probs)</text>
+  <rect x="680" y="230" width="140" height="50" rx="6" fill="#f8fbfd" stroke="#60d0e8" stroke-width="1"/>
+  <text x="750" y="250" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#1a2e35">Soft Belief Packet</text>
+  <text x="750" y="265" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="rgba(26, 46, 53, 0.7)">(top-k IDs, probs)</text>
   
   <!-- Arrow down from bus -->
-  <path d="M450 395 L450 420 L445 415 M450 420 L455 415" stroke="#666" stroke-width="2" fill="none"/>
+  <path d="M450 395 L450 420 L445 415 M450 420 L455 415" stroke="#1a2e35" stroke-width="2" fill="none"/>
   
   <!-- SwiReasoning Controller -->
   <rect x="275" y="425" width="350" height="55" rx="10" fill="url(#controllerGrad)" filter="url(#shadow)"/>
-  <text x="450" y="450" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="white">Layer 3: SwiReasoning Controller</text>
-  <text x="450" y="468" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="rgba(255,255,255,0.9)">Monitors entropy trends • Switch count control</text>
+  <text x="450" y="450" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#f8fbfd">Layer 3: SwiReasoning Controller</text>
+  <text x="450" y="468" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="rgba(248, 251, 253, 0.9)">Monitors entropy trends • Switch count control</text>
   
   <!-- Decision branches -->
-  <path d="M350 480 L250 515" stroke="#dc3545" stroke-width="2" fill="none"/>
-  <path d="M550 480 L650 515" stroke="#28a745" stroke-width="2" fill="none"/>
+  <path d="M350 480 L250 515" stroke="#007b7f" stroke-width="2" fill="none"/>
+  <path d="M550 480 L650 515" stroke="#0ca7b3" stroke-width="2" fill="none"/>
   
   <!-- High Entropy branch -->
-  <rect x="130" y="520" width="180" height="40" rx="6" fill="#f8d7da" stroke="#dc3545" stroke-width="2"/>
-  <text x="220" y="545" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#721c24">High Entropy → Loop Back</text>
+  <rect x="130" y="520" width="180" height="40" rx="6" fill="#f8fbfd" stroke="#007b7f" stroke-width="2"/>
+  <text x="220" y="545" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a2e35">High Entropy → Loop Back</text>
   
   <!-- Loop back arrow -->
-  <path d="M130 540 L80 540 L80 310 L100 310" stroke="#dc3545" stroke-width="2" fill="none" stroke-dasharray="5,3"/>
-  <polygon points="100,305 100,315 110,310" fill="#dc3545"/>
+  <path d="M130 540 L80 540 L80 310 L100 310" stroke="#007b7f" stroke-width="2" fill="none" stroke-dasharray="5,3"/>
+  <polygon points="100,305 100,315 110,310" fill="#007b7f"/>
   
   <!-- Low Entropy branch -->
-  <rect x="590" y="520" width="180" height="40" rx="6" fill="#d4edda" stroke="#28a745" stroke-width="2"/>
-  <text x="680" y="545" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#155724">Low Entropy → Consensus</text>
+  <rect x="590" y="520" width="180" height="40" rx="6" fill="#a8e0ec" stroke="#0ca7b3" stroke-width="2"/>
+  <text x="680" y="545" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#1a2e35">Low Entropy → Consensus</text>
   
   <!-- Arrow to consensus -->
-  <path d="M680 560 L680 580 L675 575 M680 580 L685 575" stroke="#666" stroke-width="2" fill="none"/>
+  <path d="M680 560 L680 580 L675 575 M680 580 L685 575" stroke="#1a2e35" stroke-width="2" fill="none"/>
   
   <!-- Consensus Engine -->
   <rect x="530" y="585" width="300" height="50" rx="10" fill="url(#consensusGrad)" filter="url(#shadow)"/>
-  <text x="680" y="608" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="white">Layer 5: TIES-Merging Consensus</text>
-  <text x="680" y="625" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="rgba(255,255,255,0.9)">Trim → Elect → Merge</text>
+  <text x="680" y="608" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#f8fbfd">Layer 5: TIES-Merging Consensus</text>
+  <text x="680" y="625" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="rgba(248, 251, 253, 0.9)">Trim → Elect → Merge</text>
   
   <!-- Arrow to final output -->
-  <path d="M450 610 L450 580 L530 610" stroke="#666" stroke-width="2" fill="none" stroke-dasharray="5,3"/>
+  <path d="M450 610 L450 580 L530 610" stroke="#1a2e35" stroke-width="2" fill="none" stroke-dasharray="5,3"/>
   
   <!-- Final Answer -->
   <rect x="100" y="585" width="160" height="50" rx="10" fill="url(#headerGrad)" filter="url(#shadow)"/>
-  <text x="180" y="615" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white">Final Answer</text>
+  <text x="180" y="615" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#f8fbfd">Final Answer</text>
   
   <!-- Arrow from consensus to final -->
-  <path d="M530 610 L260 610" stroke="#666" stroke-width="2" fill="none"/>
-  <polygon points="265,605 265,615 255,610" fill="#666"/>
+  <path d="M530 610 L260 610" stroke="#1a2e35" stroke-width="2" fill="none"/>
+  <polygon points="265,605 265,615 255,610" fill="#1a2e35"/>
   
   <!-- Legend -->
-  <rect x="20" y="55" width="120" height="110" rx="6" fill="white" stroke="#dee2e6" stroke-width="1"/>
-  <text x="80" y="75" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#495057">Legend</text>
+  <rect x="20" y="55" width="120" height="110" rx="6" fill="#f8fbfd" stroke="#60d0e8" stroke-width="1"/>
+  <text x="80" y="75" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#1a2e35">Legend</text>
   <rect x="30" y="85" width="15" height="15" rx="3" fill="url(#expertGrad)"/>
-  <text x="50" y="96" font-family="Arial, sans-serif" font-size="9" fill="#495057">Expert Models</text>
+  <text x="50" y="96" font-family="Arial, sans-serif" font-size="9" fill="#1a2e35">Expert Models</text>
   <rect x="30" y="105" width="15" height="15" rx="3" fill="url(#controllerGrad)"/>
-  <text x="50" y="116" font-family="Arial, sans-serif" font-size="9" fill="#495057">Controller</text>
+  <text x="50" y="116" font-family="Arial, sans-serif" font-size="9" fill="#1a2e35">Controller</text>
   <rect x="30" y="125" width="15" height="15" rx="3" fill="url(#consensusGrad)"/>
-  <text x="50" y="136" font-family="Arial, sans-serif" font-size="9" fill="#495057">Consensus</text>
-  <line x1="30" y1="152" x2="45" y2="152" stroke="#17a2b8" stroke-width="3" stroke-dasharray="5,3"/>
-  <text x="50" y="156" font-family="Arial, sans-serif" font-size="9" fill="#495057">Latent Bus</text>
+  <text x="50" y="136" font-family="Arial, sans-serif" font-size="9" fill="#1a2e35">Consensus</text>
+  <line x1="30" y1="152" x2="45" y2="152" stroke="#0ca7b3" stroke-width="3" stroke-dasharray="5,3"/>
+  <text x="50" y="156" font-family="Arial, sans-serif" font-size="9" fill="#1a2e35">Latent Bus</text>
 </svg>
