@@ -1,0 +1,16 @@
+[
+  {
+    "exp_id": "A1.1",
+    "seed": 42,
+    "accuracy": 49.390243902439025,
+    "mean_latent": 11.298780487804878,
+    "mean_switches": 2.1341463414634148,
+    "timeouts": 0,
+    "failures": 0,
+    "total_time": 2353.8991265296936,
+    "kl_drift": null,
+    "cosine_drift": null,
+    "status": "success",
+    "samples": []
+  }
+]

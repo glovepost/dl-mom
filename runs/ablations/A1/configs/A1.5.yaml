@@ -1,0 +1,11 @@
+alpha: 0.6
+cap: 10
+id: A1.5
+k: 50
+lambda: 20
+max_handoffs: 2
+max_new_tokens: 768
+max_steps: 40
+soft_mode: dirichlet
+tau: null
+w: null

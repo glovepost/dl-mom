@@ -1,0 +1,11 @@
+alpha: 0.6
+cap: -1
+gate: threshold
+id: A2.1
+k: 50
+lambda: null
+max_handoffs: 2
+max_new_tokens: 768
+max_steps: 40
+tau: null
+w: null

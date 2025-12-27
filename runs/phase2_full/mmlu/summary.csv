@@ -1,0 +1,2 @@
+exp_id,seed,accuracy,mean_latent,mean_switches,timeouts,failures,total_time,kl_drift,cosine_drift,status
+A1.1,42,31.0,4.643356643356643,0.38461538461538464,0,0,2293.488461256027,,,success
