@@ -209,10 +209,30 @@ body {
   font-family: 'Roboto', sans-serif;
   color: var(--text-color);
   background: var(--color-background);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 h1, h2, h3, h4, h5, h6, .title {
   font-family: 'Google Sans', 'Roboto', sans-serif;
+}
+
+.title,
+.subtitle,
+.content,
+.content p,
+.content li,
+.content strong,
+.content em,
+.content span,
+.label,
+.table thead th,
+.table tbody td,
+.table tfoot th,
+.table tfoot td {
+  color: var(--text-primary);
 }
 
 a {
@@ -220,6 +240,14 @@ a {
 }
 
 a:hover {
+  color: var(--text-link-hover);
+}
+
+.content a {
+  color: var(--text-link);
+}
+
+.content a:hover {
   color: var(--text-link-hover);
 }
 
