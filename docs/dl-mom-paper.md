@@ -1,4 +1,4 @@
-# Deep-Latent Mixture of Models: A Training-Free Architecture for System 2 Reasoning via Latent-Space Collaboration
+# Deep-Latent Mixture of Models (DL-MoM): A Training-Free Latent Collaboration Protocol, Reference Implementation, and Pilot Study
 
 Lawrence Beckwith, OtherU
 
@@ -6,7 +6,7 @@ Lawrence Beckwith, OtherU
 
 ## Abstract
 
-We present **Deep-Latent Mixture of Models (DL-MoM)**, a training-free architecture that enables multiple large language models to collaborate **primarily in latent space**, approximating System 2–style reasoning without fine-tuning. Unlike traditional mixture-of-experts systems that route discrete text tokens, DL-MoM routes **probabilistic belief representations**—**Soft Belief Packets**—between expert models and performs consensus directly over latent preferences. DL-MoM integrates (i) **probabilistic latent reasoning** (Soft Thinking, Coconut), (ii) **adaptive computation** (SwiReasoning) via trend-based entropy switching, (iii) **multi-agent latent collaboration** (LatentMAS, InterLat) while replacing learned alignment/bridge components with training-free alternatives, and (iv) **training-free KV-cache compression** (KIVI, MiniCache) for efficient *per-expert* context retention. We introduce three key innovations: (1) a **Sparse Belief Packet** protocol enabling cross-model latent communication without learned alignment matrices, (2) a **trend-based entropy controller** with switch-count controls for stable dynamic switching between exploration and exploitation, and (3) a **contrastive TIES-style consensus engine** that merges expert preferences in latent space. We provide an implementation blueprint compatible with off-the-shelf models (e.g., Qwen-2.5, Llama-3) and a reproducible experimental protocol with ablation registries and runner tooling. We further discuss how *optional* learned cache-to-cache (C2C) projectors can enable KV transfer across heterogeneous architectures, but this extension is not training-free.
+We present **Deep-Latent Mixture of Models (DL-MoM)** as a training-free **protocol and reference implementation** for latent-space collaboration among large language models. Instead of treating text as the only communication channel, DL-MoM routes **probabilistic belief representations** in the form of **Soft Belief Packets**, uses **trend-based entropy control** to regulate latent versus explicit computation, and merges expert preferences with a **contrastive TIES-style consensus** operator. The paper's primary contribution is therefore architectural and methodological: (1) a sparse belief-packet protocol for training-free belief passing, (2) an adaptive entropy controller with switch-count controls, (3) a runtime consensus mechanism over centered logits, and (4) a reproducibility-oriented artifact covering the latent loop, communication modes, and compression hooks. The current checked-in experiments are intentionally scoped as a **pilot study**: they demonstrate end-to-end feasibility in predominantly single-model settings across several benchmarks, but they do **not** yet constitute full validation of routed multi-model collaboration, heterogeneous expert transfer, or Pareto-superior reasoning performance. We therefore present the lookahead router and heterogeneous transfer path as components of the broader DL-MoM design, and we specify the fuller empirical program required to validate them.
 
 ---
 
@@ -16,17 +16,19 @@ Large language models (LLMs) have demonstrated remarkable performance across div
 
 In parallel, multi-agent LLM systems have emerged as a promising paradigm for complex problem solving, where multiple models collaborate by exchanging messages. However, typical multi-agent frameworks communicate in natural language, imposing repeated encoding/decoding overhead and discarding rich distributional information present in logits, hidden states, and KV caches. This interface forces subsequent agents to reconstruct semantic states from lossy token sequences, limiting bandwidth and efficiency.
 
-We propose **Deep-Latent Mixture of Models (DL-MoM)**, a unified architecture that addresses these limitations by treating latent space as the primary medium for (i) reasoning, (ii) routing, and (iii) consensus. DL-MoM transmits **probabilistic beliefs** instead of argmax token decisions, enabling downstream experts to condition on uncertainty rather than only on committed strings. The system only decodes to text for final outputs (and optionally for fallback bridging when tokenizers are incompatible).
+We propose **Deep-Latent Mixture of Models (DL-MoM)**, a unified protocol that addresses these limitations by treating latent space as the primary medium for (i) reasoning, (ii) routing, and (iii) consensus. DL-MoM transmits **probabilistic beliefs** instead of argmax token decisions, enabling downstream experts to condition on uncertainty rather than only on committed strings. The system only decodes to text for final outputs (and optionally for fallback bridging when tokenizers are incompatible).
+
+**Scope of this paper.** This manuscript should be read as a protocol-and-artifact paper with pilot empirical evidence, not as a completed empirical demonstration of multi-model superiority. The current repository fully implements the latent loop, belief packets, consensus, entropy controller, and compression hooks in single-model settings; the lookahead router, benchmarked multi-expert handoffs, and heterogeneous transfer mechanisms are specified as part of the broader DL-MoM design but are not yet comprehensively validated in the checked-in benchmark suite.
 
 ### Core Contributions
 
-1. **Soft Belief Packet Protocol.** A sparse representation—top-k token IDs with associated probabilities—that enables latent communication between heterogeneous models **without learned alignment matrices** and without requiring shared embedding vectors.
+1. **Soft Belief Packet Protocol.** A sparse representation—top-k token IDs with associated probabilities—that enables latent communication across experts with compatible vocabularies **without learned alignment matrices** and without requiring shared embedding vectors.
 
 2. **Trend-Based Entropy Controller.** An adaptive mechanism inspired by SwiReasoning that monitors **block-wise normalized entropy trends** to dynamically switch between latent exploration and explicit exploitation, with switch-count controls to prevent oscillatory overthinking.
 
 3. **Contrastive Consensus Engine (TIES-style).** A principled approach to combining expert preferences in latent space by centering logits into contrastive "preference vectors" and applying trimming, sign election, and disjoint merging.
 
-4. **Training-Free Implementation Blueprint.** A concrete implementation plan and reproducible experiment registry compatible with off-the-shelf models and modern inference stacks.
+4. **Reference Artifact and Pilot Evaluation.** A concrete implementation artifact, experiment registry, and pilot benchmark study that establish feasibility for the implemented latent loop while making clear which parts of the full DL-MoM design remain future work.
 
 ---
 
@@ -96,7 +98,7 @@ DL-MoM adapts the *principle* of directional conflict resolution to runtime cons
 
 ### 3.1 System Overview
 
-DL-MoM consists of five interconnected components:
+The full DL-MoM design consists of five interconnected components. The current checked-in artifact instantiates components 2-5 in pilot form and uses fixed expert sets; component 1 is specified as the intended routing layer for the full system but is not exercised in the primary benchmark artifact.
 
 1. **Lookahead Latent Router** (training-free expert selection)
 2. **Soft Thinking Engines** (belief generation)
@@ -109,6 +111,8 @@ DL-MoM consists of five interconnected components:
 ---
 
 ### 3.2 Layer 1: Lookahead Router via Perplexity Probing
+
+This router is part of the **intended full DL-MoM design**. The current pilot artifact does not use this component in its main benchmark runs; instead, it evaluates the latent loop with fixed expert sets that are typically of size 1.
 
 Standard routers rely on keyword heuristics or trained classifiers. DL-MoM uses **perplexity probing** to select experts without training:
 
@@ -230,9 +234,25 @@ The merged preferences are converted into the next belief packet via softmax + t
 
 ---
 
-## 4. Implementation
+## 4. Reference Implementation
 
-DL-MoM requires no fine-tuning—only custom inference-time logic.
+The implemented DL-MoM core requires no fine-tuning; it is realized through custom inference-time logic. However, the current artifact is **partial** with respect to the full architecture described in Section 3.
+
+**Implemented in the current repository**
+
+- belief packet construction and reconstruction
+- contrastive consensus over logits
+- threshold and trend-based entropy control
+- communication ablations (`embed`, `belief`, `logits`)
+- KV-compression hooks and pilot compression studies
+- benchmark harnesses for predominantly single-model runs
+
+**Specified but not yet fully validated in the main artifact**
+
+- lookahead perplexity-based expert routing
+- benchmarked multi-expert handoffs
+- heterogeneous multi-model evaluation as the primary path
+- a unified production-quality `dlmom` CLI entrypoint
 
 ### 4.1 Core Algorithm (High-Level)
 
@@ -269,6 +289,8 @@ Output: final text
 19: return DecodeFinal(packet)
 ```
 
+Algorithm 1 describes the **general DL-MoM loop**. In the current checked-in benchmark artifact, the primary `phase2_full` runs instantiate this loop in effectively single-model mode (`K=1`), so the algorithm should be interpreted as the reference design rather than as the exact configuration of every released result.
+
 ### 4.2 Key Engineering Details
 
 - **Detaching latent buffers:** store belief packets in fp16/bf16 and detach to avoid memory growth.
@@ -292,7 +314,7 @@ Output: final text
 
 ---
 
-## 5. Theoretical Analysis
+## 5. Analytical Motivation
 
 ### 5.1 Information-Theoretic Foundation (Belief Packets)
 
@@ -304,11 +326,11 @@ quantifies truncation distortion in terms of discarded mass. When $\tau$ is smal
 
 ### 5.2 Consensus Stability and Convergence
 
-Logit consensus can be cast as a single-iteration robust consensus propagation step [18, 19]. Let centered preference vectors be $v_i = z_i - \bar{z}_i$. The TIES-style merge (Trim–Elect–Merge) produces $v^{\ast}$ with bounded deviation from the mean:
+Logit consensus can be viewed heuristically as a single-iteration robust consensus propagation step [18, 19]. Let centered preference vectors be $v_i = z_i - \bar{z}_i$. Under simplifying assumptions about bounded sign disagreement and within-group dispersion, one can motivate a deviation relation of the form
 
 $$\|v^{\ast} - \bar{v}\|_2 \leq \sqrt{K}\,\rho\,\max_i \|v_i - \bar{v}\|_2,$$
 
-where $\rho$ is the fraction of entries with sign disagreement. Trimming suppresses low-magnitude noise; sign election avoids destructive cancellation. Calibration matters: per-expert temperature scaling (or z-scoring) before merging reduces bias from miscalibrated experts.
+where $\rho$ is the fraction of entries with sign disagreement. Trimming suppresses low-magnitude noise; sign election avoids destructive cancellation. Calibration matters: per-expert temperature scaling (or z-scoring) before merging reduces bias from miscalibrated experts. We present this as analytical intuition for the merge operator rather than as a complete formal theorem for the exact runtime implementation.
 
 ### 5.3 Superposition View of Latent Reasoning
 
@@ -316,31 +338,50 @@ Soft belief packets implement a superposition state $e_{\text{soft}} = \sum_i p_
 
 ### 5.4 Entropy-Guided Adaptive Computation
 
-Normalized entropy $H_{\text{norm}} = H / \log|V|$ is a convergence proxy: under deterministic updates, $H_{\text{norm}}$ decreases in expectation as evidence accumulates. A trend gate over a window $w$ reduces false positives vs. a single threshold by $O(\sqrt{w})$ variance reduction, and a switch-count cap bounds oscillations (total switches $\leq$ cap), ensuring compute stays $O(S)$.
+Normalized entropy $H_{\text{norm}} = H / \log|V|$ is a convergence proxy: under deterministic updates, $H_{\text{norm}}$ is expected to decrease as evidence accumulates. A trend gate over a window $w$ can reduce sensitivity to noisy one-step fluctuations relative to a single threshold, while a switch-count cap bounds oscillations (total switches $\leq$ cap). These are design hypotheses that should be validated empirically rather than treated as fully general guarantees of the complete system.
 
 ### 5.5 TIES Adaptation in Logit Space
 
-Centering logits is distribution-preserving ($\text{softmax}(z)=\text{softmax}(z-\bar{z})$) and exposes directional preferences. Applying TIES on centered logits amplifies agreement while suppressing conflicts [11]; expected consensus norm grows when disagreeing signs are excluded, yielding sharper merged preferences. A spectral variant (low-rank projection before TIES) can further denoise high-rank logits [21]. Calibration alignment (temperature/variance) should precede merging in heterogeneous ensembles.
+Centering logits is distribution-preserving ($\text{softmax}(z)=\text{softmax}(z-\bar{z})$) and exposes directional preferences. Applying TIES on centered logits can amplify agreement while suppressing conflicts [11]. Related work on model merging further suggests that normalization and averaging choices materially affect merge stability [21], although those alternatives are outside the current artifact. Calibration alignment (temperature/variance) should precede merging in heterogeneous ensembles.
 
 ---
 
-## 6. Proposed Experimental Evaluation
+## 6. Current Empirical Status and Planned Evaluation
 
-We outline a comprehensive experimental protocol to validate **DL-MoM**. Unless otherwise stated, all experiments report: **task accuracy**, **tokens generated** (explicit + latent), **wall-clock time**, **peak memory**, and **failure/drift rate**. For stochastic variants, results are averaged over **3 seeds** and reported with **mean ± std**.
+This paper has two empirical components. First, we report the status of the **current checked-in artifact**, which implements the latent loop, belief packets, consensus, controller, and compression hooks and has been run in pilot single-model settings. Second, we specify the **full evaluation program** required to validate the broader DL-MoM claims about routed multi-model collaboration. The pilot artifact supports feasibility claims; it does not by itself establish superiority over baselines or verify the full multi-expert design.
 
-### 6.0 Experimental Controls
+### 6.1 Current Artifact Status
 
-**Models.** Primary results use a single strong instruction-tuned LLM (e.g., 7–14B class). To support "model-agnostic" claims, replicate the full suite on a second model family when feasible.
+The benchmark artifacts currently committed under `runs/phase2_full/` evaluate only the deterministic `A1.1` configuration, use a **single seed (`42`)**, and operate in effectively **single-model mode**. MATH, MMLU, ARC-Challenge, and HellaSwag use `Qwen/Qwen2.5-Math-1.5B-Instruct`; HumanEval and MBPP use `Qwen/Qwen2.5-Coder-1.5B-Instruct`. These runs do **not** exercise the proposed lookahead router, benchmarked multi-expert handoffs, or heterogeneous expert collaboration.
 
-**Prompting.** All variants share identical prompts and output formats. Latent-mode variants are required to emit a final explicit answer string for scoring.
+| Benchmark | Model | Samples | Valid | Accuracy (%) | Mean latent steps | Mean switches |
+|---|---|---:|---:|---:|---:|---:|
+| MATH | `Qwen/Qwen2.5-Math-1.5B-Instruct` | 200 | 194 | 77.5 | 2.91 | 0.02 |
+| ARC-Challenge | `Qwen/Qwen2.5-Math-1.5B-Instruct` | 200 | 180 | 45.5 | 3.81 | 0.53 |
+| HellaSwag | `Qwen/Qwen2.5-Math-1.5B-Instruct` | 200 | 199 | 43.5 | 4.09 | 0.36 |
+| MMLU | `Qwen/Qwen2.5-Math-1.5B-Instruct` | 200 | 143 | 31.0 | 4.64 | 0.38 |
+| HumanEval | `Qwen/Qwen2.5-Coder-1.5B-Instruct` | 164 | 164 | 49.39 | 11.30 | 2.13 |
+| MBPP | `Qwen/Qwen2.5-Coder-1.5B-Instruct` | 200 | 200 | 4.0 | 7.90 | 1.35 |
 
-**Agent topology.** Fix: number of agents (e.g., 2 or 3), roles (Generalist→Specialist), and maximum handoffs. Only ablation knobs change.
+These pilot numbers are useful as **artifact-level feasibility checks**: the implemented latent loop runs end-to-end, emits scorable answers, and exposes measurable latent-depth and switching behavior across multiple benchmark types. They should **not** be interpreted as a unified claim about general reasoning quality, multi-model collaboration, or Pareto efficiency, because the artifact currently uses different base models across task families, only one seed, and no matched baseline suite. GSM8K remains part of the planned evaluation but is not part of the checked-in `phase2_full` artifact.
 
-**Budgets.** Fix `max_steps`, `max_switches`, and `max_handoffs` across conditions (except where explicitly ablated).
+### 6.2 Experimental Controls
+
+The remaining subsections describe the controls required for the **full validation study**.
+
+**Models.** Primary full results should use a strong instruction-tuned LLM family and then replicate on a second family to support any "model-agnostic" claim. Multi-model claims additionally require experiments with at least two distinct experts and a declared routing policy.
+
+**Prompting.** All variants should share identical prompts and output formats. Latent-mode variants are required to emit a final explicit answer string for scoring.
+
+**Agent topology.** Fix the number of agents (e.g., 2 or 3), roles (Generalist→Specialist), and maximum handoffs. Only ablation knobs should change. The current pilot artifact does not yet exercise handoffs in the main benchmark suite.
+
+**Budgets.** Fix `max_steps`, `max_switches`, and `max_handoffs` across comparable conditions (except where explicitly ablated).
+
+**Seeds.** For stochastic variants in the full study, report **mean ± std** over at least **3 seeds**. The current pilot artifact does not yet meet this standard.
 
 ---
 
-### 6.1 Ablation Studies
+### 6.3 Ablation Studies
 
 Each ablation changes *one axis* relative to a **Unified Default**:
 
@@ -410,11 +451,11 @@ Goal: quantify memory/throughput gains vs drift.
 4. **KIVI + MiniCache combined**
    Evaluate both orderings if they differ (merge→quantize vs quantize→merge).
 
-**Drift requirement:** report logits divergence vs uncompressed baseline (see §6.4).
+**Drift requirement:** report logits divergence vs uncompressed baseline (see §6.6).
 
 ---
 
-### 6.2 Benchmark Evaluation
+### 6.4 Benchmark Evaluation
 
 We evaluate on three capability groups. For each dataset, we fix the evaluation script, split, and answer-extraction rules, and we publish all prompts.
 
@@ -435,7 +476,7 @@ We evaluate on three capability groups. For each dataset, we fix the evaluation 
 
 ---
 
-### 6.3 Baseline Comparisons
+### 6.5 Baseline Comparisons
 
 **Single-model baselines**
 - Direct prompting (no CoT)
@@ -451,9 +492,11 @@ We evaluate on three capability groups. For each dataset, we fix the evaluation 
 **Optional**
 - Raw latent bus baseline (LatentMAS-style hidden-state passing) to directly quantify stability gains.
 
+These baselines are part of the intended full study and are **not yet** included in the checked-in `phase2_full` artifact.
+
 ---
 
-### 6.4 Metrics, Drift, and Failure Definitions
+### 6.6 Metrics, Drift, and Failure Definitions
 
 **Token accounting**
 - `explicit_tokens`: decoded tokens emitted
@@ -483,9 +526,9 @@ Report failure rate per benchmark and per ablation.
 
 ---
 
-### 6.5 Experiment Registry and Reproducible Runner
+### 6.7 Experiment Registry, Artifact Entry Points, and Reproducible Runner
 
-#### 6.5.1 Canonical Config Fields
+#### 6.7.1 Canonical Config Fields
 
 All ablation cells use the following normalized configuration fields:
 
@@ -501,7 +544,7 @@ All ablation cells use the following normalized configuration fields:
 
 ---
 
-#### 6.5.2 Experiment ID Tables (Exact Fields)
+#### 6.7.2 Experiment ID Tables (Exact Fields)
 
 ##### A1 — Soft Token Variants
 
@@ -548,11 +591,24 @@ All ablation cells use the following normalized configuration fields:
 
 ---
 
-#### 6.5.3 Minimal Runner CLI Spec
+#### 6.7.3 Current Artifact Entry Point and Target Unified CLI
 
-We define a single entrypoint `dlmom` with three subcommands.
+**Current artifact status.** The primary evaluation entry point in this repository is `python -m dlmom.ablation_runner`. The separate `dlmom/cli.py` module is currently a scaffold and should **not** be cited as the canonical reproduction path for the checked-in results.
 
-**Run a suite (auto-enumerate + execute)**
+**Current benchmark-style invocation**
+
+```bash
+python -m dlmom.ablation_runner \
+  --suite A1 \
+  --exp-id A1.1 \
+  --bench math \
+  --model Qwen/Qwen2.5-Math-1.5B-Instruct \
+  --output runs/phase2_full/math \
+  --seeds 42 \
+  --samples 200
+```
+
+**Target unified CLI (future work).** A cleaned-up `dlmom` entrypoint should eventually subsume the ablation runner and expose three subcommands:
 
 ```bash
 dlmom run \
@@ -570,7 +626,7 @@ dlmom run \
   --resume
 ```
 
-**Required behavior**
+**Required behavior of the target unified CLI**
 
 * Enumerate experiment IDs for the suite (A1.* etc.)
 * Materialize `runs/.../configs/<ID>.yaml`
@@ -579,7 +635,7 @@ dlmom run \
   * `runs/.../summary/<ID>.json` (aggregate)
 * Run a fixed **reference** configuration first (`REF` = Unified Default, no KV compression) for consistent drift computation.
 
-**Aggregate results (CSV + LaTeX-ready)**
+**Target aggregation command**
 
 ```bash
 dlmom aggregate \
@@ -587,7 +643,7 @@ dlmom aggregate \
   --out runs/2025-12-15_A1/aggregate.csv
 ```
 
-**Generate plots (paper figures)**
+**Target plotting command**
 
 ```bash
 dlmom plot \
@@ -596,7 +652,7 @@ dlmom plot \
   --format png
 ```
 
-**Required plots**
+**Required plots for the target unified CLI**
 
 1. `accuracy_vs_total_steps.png` (Pareto)
 2. `accuracy_vs_wallclock.png` (Pareto)
@@ -607,7 +663,7 @@ dlmom plot \
 
 ---
 
-#### 6.5.4 Grid Specification (`configs/suites.yaml`)
+#### 6.7.4 Grid Specification (`configs/suites.yaml`)
 
 ```yaml
 defaults:
@@ -697,7 +753,7 @@ suites:
       kv: minicache+kivi2bit
 ```
 
-For `--batch-size auto`, the runner should probe batch size and record the chosen value in `summary/<ID>.json`.
+For `--batch-size auto`, the target unified runner should probe batch size and record the chosen value in `summary/<ID>.json`.
 
 ---
 
@@ -740,7 +796,8 @@ For `--batch-size auto`, the runner should probe batch size and record the chose
 * **Tokenizer dependency.** Soft Belief Packets require compatible vocabularies. Text-Bridge fallback preserves structure but reduces soft information on incompatible links.
 * **Memory overhead.** Maintaining KV caches for multiple experts remains expensive; practical deployment on consumer GPUs may require aggressive quantization and limiting expert count.
 * **Heterogeneous KV transfer is not training-free.** Cross-architecture KV-cache transfer requires learned bridging (e.g., cache-to-cache projection) or must be restricted to intra-family settings where lightweight alignment suffices. DL-MoM’s training-free guarantee applies to belief routing + consensus + controller + compression, not to heterogeneous KV transfer.
-* **Evaluation scope.** This paper provides architecture + protocol + reproducibility tooling. Full empirical validation is defined but not yet reported here.
+* **Evaluation scope.** The current artifact is still mostly single-model, single-seed, and pilot-scale. It does not yet validate the paper’s strongest claims about routed multi-model collaboration, heterogeneous expert transfer, or superiority against strong reasoning baselines.
+* **Router status.** The lookahead perplexity router and handoff-heavy multi-expert schedules are part of the full DL-MoM design, but they are not yet the primary path in the checked-in benchmark artifact.
 
 ### 8.2 Future Directions
 
@@ -753,7 +810,7 @@ For `--batch-size auto`, the runner should probe batch size and record the chose
 
 ## 9. Conclusion
 
-DL-MoM is a training-free architecture for latent-space collaboration among LLM experts. By routing **probabilistic belief packets** and merging expert preferences via a **contrastive TIES-style consensus**, DL-MoM preserves uncertainty that text-based multi-agent systems discard and enables adaptive compute via trend-based entropy switching. We provide a complete implementation blueprint and a reproducible experimental registry to evaluate accuracy–efficiency–stability trade-offs across benchmarks.
+DL-MoM is presented here as a training-free **latent collaboration protocol and reference artifact** for LLM ensembles. Its implemented core routes **probabilistic belief packets**, merges preferences via a **contrastive TIES-style consensus**, and regulates latent depth with **trend-based entropy switching**. The current checked-in results establish pilot feasibility for this latent loop, but they do not yet fully validate the broader claims about multi-model routing or heterogeneous expert collaboration. We therefore frame this manuscript as a protocol, artifact, and pilot study, together with a concrete empirical program for the stronger claims that remain to be tested.
 
 ---
 
@@ -763,7 +820,7 @@ DL-MoM is a training-free architecture for latent-space collaboration among LLM 
 
 [2] Zhang, Y., et al. (2025). *Soft Thinking: Unlocking the Reasoning Potential of LLMs in Continuous Concept Space.* arXiv:2505.15778.
 
-[3] Shi, W., et al. (2025). *SwiReasoning: Switch-Thinking in Latent and Explicit for Pareto-Superior Reasoning LLMs.* https://swireasoning.github.io/
+[3] *SwiReasoning: Switch-Thinking in Latent and Explicit for Pareto-Superior Reasoning LLMs.* arXiv:2510.05069 (2025).
 
 [4] *Enabling Agents to Communicate Entirely in Latent Space.* arXiv:2511.09149 (2025).
 
@@ -771,7 +828,7 @@ DL-MoM is a training-free architecture for latent-space collaboration among LLM 
 
 [6] Zou, H., et al. (2025). *Latent Collaboration in Multi-Agent Systems.* arXiv:2511.20639.
 
-[7] *SIM-CoT: Supervised Implicit Chain-of-Thought.* OpenReview (2025).
+[7] *SIM-CoT: Supervised Implicit Chain-of-Thought.* arXiv:2509.20317. OpenReview / ICLR 2026.
 
 [8] Zhang, A., et al. (2024). *MiniCache: KV Cache Compression in Depth Dimension for Large Language Models.* arXiv:2405.14366.
 
@@ -799,7 +856,7 @@ DL-MoM is a training-free architecture for latent-space collaboration among LLM 
 
 [20] Zhu, H., et al. (2025). *Reasoning by Superposition: A Theoretical Perspective on Chain of Continuous Thought.* arXiv:2505.12514.
 
-[21] *Spectral Structure of Task Vectors for Model Merging and Ensembling.* arXiv:2412.12153 (2024).
+[21] *Revisiting Weight Averaging for Model Merging.* arXiv:2412.12153 (2024).
 
 [22] Fu, T., Min, Z., Zhang, H., Yan, J., Dai, G., Ouyang, W., & Wang, Y. (2025). *Cache-to-Cache: Direct Semantic Communication Between Large Language Models.* arXiv:2510.03215. https://github.com/thu-nics/C2C
 
@@ -807,24 +864,20 @@ DL-MoM is a training-free architecture for latent-space collaboration among LLM 
 
 ## Appendix A: Comparison with Existing Approaches
 
-\begingroup
-\setlength\LTleft{\fill}
-\setlength\LTright{\fill}
-
 | Feature | Text MAS | LatentMAS | InterLat | Soft Thinking | DL-MoM (Ours) |
 |---------|----------|-----------|----------|---------------|---------------|
 | Bandwidth | Low | High | High | Medium | High |
-| Training-Free | Yes | No* | No | Yes | Yes |
-| Heterogeneous | Yes | Limited | Limited | No | Yes† |
+| Training-Free | Yes | No* | No | Yes | Core only† |
+| Heterogeneous | Yes | Limited | Limited | No | Partial‡ |
 | Reasoning | Linear | Linear | Linear | BFS-like | BFS-like |
-| Consensus | Voting | Alignment (W_a) | Adapters | N/A | Contrastive TIES |
+| Consensus | Voting | Alignment (W_a) | Adapters | N/A | Contrastive TIES-style |
 | Adaptive Depth | No | No | No | No | Yes |
 
-\* LatentMAS requires alignment estimation and does not provide a fully training-free heterogeneous protocol.
+* LatentMAS requires alignment estimation and does not provide a fully training-free heterogeneous protocol.
 
-† Requires compatible tokenizers; Text-Bridge fallback for mismatched vocabularies.
+† Training-free for belief routing, controller logic, consensus, and local KV reuse/compression; heterogeneous KV transfer is outside the training-free core.
 
-\endgroup
+‡ Direct belief-level communication assumes compatible vocabularies; mismatched tokenizers require text bridging.
 
 ---
 
@@ -837,7 +890,7 @@ DL-MoM is a training-free architecture for latent-space collaboration among LLM 
 | `cap` (max switches) | 5 | Prevent oscillation / overthinking |
 | `top_k` / `k` (belief packet) | 50 | Balance information vs sparsity |
 | `max_latent_steps` | 40 | Upper bound on latent depth |
-| `max_handoffs` | 2 | Avoid runaway multi-agent loops |
+| `max_handoffs` | 2 | Reserved for routed multi-agent experiments |
 | `gumbel_temperature` / `tau` | 1.0 | Lower = more deterministic |
 | `dirichlet_lambda` / `lambda` | 50 | Higher = less noise; tune via target KL |
 | `trim_threshold` | 0.1 | TIES noise removal |
@@ -846,9 +899,6 @@ DL-MoM is a training-free architecture for latent-space collaboration among LLM 
 ---
 
 ## Appendix C: Python Implementation Sketch (Minimal)
-
-\begingroup
-\footnotesize
 
 ```python
 import torch
@@ -907,7 +957,7 @@ class DeepLatentMoM(torch.nn.Module):
         return next_packet, next_kv_cache, avg_entropy
 ```
 
-\endgroup
+This sketch is illustrative only. It omits the pilot artifact’s explicit-generation path, evaluation harness, and the not-yet-primary routing layer discussed in the main text.
 
 ---
 
@@ -916,5 +966,5 @@ class DeepLatentMoM(torch.nn.Module):
 - **Top-k KL bound (Eq. 1).** For the renormalized top-$k$ truncation $\hat{p}_k$ with tail mass $\tau$, the divergence admits the closed form
   $$\mathrm{KL}(\hat{p}_k\|p)=\log\frac{1}{1-\tau},$$
   since $\hat{p}_k = p/(1-\tau)$ on its support. This can be related to total variation via $\mathrm{TV}(p,\hat{p}_k)=1-e^{-\mathrm{KL}}$.
-- **Consensus deviation bound (§5.2).** Trimming sets $|v_{i,j}|<\theta$ to zero, and sign election partitions experts into sign-consistent sets. Disjoint merging averages within each set, yielding a deviation bound controlled by within-set dispersion and the fraction of sign conflicts $\rho$.
-- **Trend gate variance reduction (§5.4).** Under an additive-noise model $H_t = H^{\ast}+\epsilon_t$ with i.i.d. $\epsilon_t$, a windowed slope estimator over $w$ steps has variance $O(\sigma^2/w)$, reducing premature stopping relative to a single-sample threshold test.
+- **Consensus deviation bound (§5.2).** Under stylized bounded-disagreement assumptions, trimming sets $|v_{i,j}|<\theta$ to zero and sign election partitions experts into sign-consistent sets. Disjoint merging then suggests a deviation bound controlled by within-set dispersion and the fraction of sign conflicts $\rho$; this is motivation for the operator, not a full proof of the runtime system.
+- **Trend gate variance reduction (§5.4).** Under an additive-noise model $H_t = H^{\ast}+\epsilon_t$ with i.i.d. $\epsilon_t$, a windowed slope estimator over $w$ steps has variance $O(\sigma^2/w)$. This motivates the use of trend statistics for stopping, but it does not by itself prove improved end-to-end behavior of DL-MoM.
