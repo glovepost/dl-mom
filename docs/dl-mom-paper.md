@@ -1,6 +1,7 @@
 # Deep-Latent Mixture of Models (DL-MoM): A Training-Free Latent Collaboration Protocol, Reference Implementation, and Pilot Study
 
 Lawrence Beckwith, OtherU
+Affiliation: OtherU
 
 ---
 
@@ -94,7 +95,7 @@ DL-MoM adapts the *principle* of directional conflict resolution to runtime cons
 
 ## 3. DL-MoM Architecture
 
-**Core philosophy:** Standard MoE/MoM systems route *tokens* to experts. DL-MoM routes *beliefs* (latent preferences). Experts think, communicate, and merge preferences in latent space, decoding to text only for final outputs (or optional fallback bridging).
+**Core philosophy:** Standard MoE/MoM systems route *tokens* to experts [12]. DL-MoM routes *beliefs* (latent preferences). Experts think, communicate, and merge preferences in latent space, decoding to text only for final outputs (or optional fallback bridging).
 
 ### 3.1 System Overview
 
@@ -273,7 +274,7 @@ Output: final text
 8:     x_i = ReconstructSoftInput(packet, expert_i)
 9:     y_i = expert_i.forward(inputs_embeds=x_i, past_key_values=kv_cache[i])
 10:    H_i = NormalizedEntropy(y_i.logits[-1])
-11:    outputs.append({logits=y_i.logits[-1], kv=y_i.kv, entropy=H_i})
+11:    outputs.append({logits=y_i.logits[-1], kv=y_i.past_key_values, entropy=H_i})
 
 12:  H_avg = mean_i(H_i); entropy_window.append(H_avg)
 

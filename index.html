@@ -596,6 +596,192 @@ def contrastive_ties_merge(logit_list, trim_thresh=0.1):
   </div>
 </section>
 
+<!-- Experimental Results -->
+<section class="section" id="results">
+  <div class="container">
+    <h2 class="title is-3 has-text-centered">Experimental Results</h2>
+    <div class="content results-intro">
+      <p>
+        We include ablation-suite results (A1-A4) aggregated over three seeds using the evaluation
+        protocol defined in the paper. The plots summarize accuracy, efficiency, and stability trade-offs
+        across soft-token variants, controller settings, communication protocols, and KV compression options.
+      </p>
+    </div>
+
+    <div class="results-group">
+      <h3 class="title is-4">Suite Overview</h3>
+      <div class="results-grid">
+        <figure class="figure-card is-wide">
+          <picture>
+            <source srcset="runs/ablations/plots/suite_summary_dark.png" media="(prefers-color-scheme: dark)">
+            <img src="runs/ablations/plots/suite_summary.png" alt="Ablation suite summary: mean vs best accuracy for A1-A4" loading="lazy">
+          </picture>
+          <figcaption>Suite summary: mean vs best accuracy for A1-A4.</figcaption>
+        </figure>
+        <figure class="figure-card is-wide">
+          <picture>
+            <source srcset="runs/ablations/plots/accuracy_heatmap_dark.png" media="(prefers-color-scheme: dark)">
+            <img src="runs/ablations/plots/accuracy_heatmap.png" alt="Accuracy heatmap across experiments and seeds" loading="lazy">
+          </picture>
+          <figcaption>Accuracy heatmap across experiments and seeds.</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="results-group">
+      <h3 class="title is-4">Efficiency and Drift</h3>
+      <div class="results-grid">
+        <figure class="figure-card">
+          <picture>
+            <source srcset="runs/ablations/plots/accuracy_vs_total_steps_dark.png" media="(prefers-color-scheme: dark)">
+            <img src="runs/ablations/plots/accuracy_vs_total_steps.png" alt="Accuracy vs latent reasoning steps" loading="lazy">
+          </picture>
+          <figcaption>Accuracy vs latent reasoning steps.</figcaption>
+        </figure>
+        <figure class="figure-card">
+          <picture>
+            <source srcset="runs/ablations/plots/accuracy_vs_wallclock_dark.png" media="(prefers-color-scheme: dark)">
+            <img src="runs/ablations/plots/accuracy_vs_wallclock.png" alt="Accuracy vs inference time" loading="lazy">
+          </picture>
+          <figcaption>Accuracy vs inference time.</figcaption>
+        </figure>
+        <figure class="figure-card">
+          <picture>
+            <source srcset="runs/ablations/plots/drift_histogram_dark.png" media="(prefers-color-scheme: dark)">
+            <img src="runs/ablations/plots/drift_histogram.png" alt="Distribution of KL drift from the reference pipeline" loading="lazy">
+          </picture>
+          <figcaption>Distribution of KL drift from the reference pipeline.</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="results-group">
+      <h3 class="title is-4">A1: Soft Token Variants</h3>
+      <div class="results-grid">
+        <figure class="figure-card is-wide">
+          <picture>
+            <source srcset="runs/ablations/plots/a1_soft_mode_comparison_dark.png" media="(prefers-color-scheme: dark)">
+            <img src="runs/ablations/plots/a1_soft_mode_comparison.png" alt="A1 soft token variant comparison" loading="lazy">
+          </picture>
+          <figcaption>Soft token variant comparison.</figcaption>
+        </figure>
+        <figure class="figure-card is-wide">
+          <picture>
+            <source srcset="runs/ablations/plots/a1_variance_analysis_dark.png" media="(prefers-color-scheme: dark)">
+            <img src="runs/ablations/plots/a1_variance_analysis.png" alt="A1 variance across seeds" loading="lazy">
+          </picture>
+          <figcaption>Variance across seeds for A1 variants.</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="results-group">
+      <h3 class="title is-4">A2: Controller Variants</h3>
+      <div class="results-grid">
+        <figure class="figure-card is-wide">
+          <picture>
+            <source srcset="runs/ablations/plots/a2_controller_comparison_dark.png" media="(prefers-color-scheme: dark)">
+            <img src="runs/ablations/plots/a2_controller_comparison.png" alt="A2 controller variant comparison" loading="lazy">
+          </picture>
+          <figcaption>Controller variant comparison.</figcaption>
+        </figure>
+        <figure class="figure-card is-wide">
+          <picture>
+            <source srcset="runs/ablations/plots/a2_entropy_traces_dark.png" media="(prefers-color-scheme: dark)">
+            <img src="runs/ablations/plots/a2_entropy_traces.png" alt="A2 entropy traces by controller variant" loading="lazy">
+          </picture>
+          <figcaption>Entropy traces by controller variant.</figcaption>
+        </figure>
+        <figure class="figure-card">
+          <picture>
+            <source srcset="runs/ablations/plots/a2_switches_vs_accuracy_dark.png" media="(prefers-color-scheme: dark)">
+            <img src="runs/ablations/plots/a2_switches_vs_accuracy.png" alt="A2 switches vs accuracy tradeoff" loading="lazy">
+          </picture>
+          <figcaption>Switches vs accuracy trade-off.</figcaption>
+        </figure>
+        <figure class="figure-card">
+          <picture>
+            <source srcset="runs/ablations/plots/switch_count_cdf_dark.png" media="(prefers-color-scheme: dark)">
+            <img src="runs/ablations/plots/switch_count_cdf.png" alt="CDF of latent and explicit mode switches" loading="lazy">
+          </picture>
+          <figcaption>CDF of latent and explicit mode switches.</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="results-group">
+      <h3 class="title is-4">A3: Communication Protocols</h3>
+      <div class="results-grid">
+        <figure class="figure-card is-wide">
+          <picture>
+            <source srcset="runs/ablations/plots/bandwidth_vs_accuracy_dark.png" media="(prefers-color-scheme: dark)">
+            <img src="runs/ablations/plots/bandwidth_vs_accuracy.png" alt="A3 communication protocol efficiency" loading="lazy">
+          </picture>
+          <figcaption>Communication protocol efficiency (bandwidth vs accuracy).</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="results-group">
+      <h3 class="title is-4">A4: KV Compression</h3>
+      <p class="results-note">
+        TokenMerge in these plots refers to the MiniCache-style depth merge configuration.
+      </p>
+      <div class="results-grid">
+        <figure class="figure-card is-wide">
+          <picture>
+            <source srcset="runs/ablations/plots/a4_accuracy_dark.png" media="(prefers-color-scheme: dark)">
+            <img src="runs/ablations/plots/a4_accuracy.png" alt="A4 KV compression impact on accuracy" loading="lazy">
+          </picture>
+          <figcaption>KV compression impact on accuracy.</figcaption>
+        </figure>
+        <figure class="figure-card">
+          <picture>
+            <source srcset="runs/ablations/plots/a4_accuracy_vs_exploration_dark.png" media="(prefers-color-scheme: dark)">
+            <img src="runs/ablations/plots/a4_accuracy_vs_exploration.png" alt="A4 accuracy vs latent exploration tradeoff" loading="lazy">
+          </picture>
+          <figcaption>Accuracy vs latent exploration trade-off.</figcaption>
+        </figure>
+        <figure class="figure-card">
+          <picture>
+            <source srcset="runs/ablations/plots/a4_kl_drift_dark.png" media="(prefers-color-scheme: dark)">
+            <img src="runs/ablations/plots/a4_kl_drift.png" alt="A4 distribution shift under compression" loading="lazy">
+          </picture>
+          <figcaption>Distribution shift under compression (KL drift).</figcaption>
+        </figure>
+        <figure class="figure-card">
+          <picture>
+            <source srcset="runs/ablations/plots/a4_latent_exploration_dark.png" media="(prefers-color-scheme: dark)">
+            <img src="runs/ablations/plots/a4_latent_exploration.png" alt="A4 compression effect on latent exploration" loading="lazy">
+          </picture>
+          <figcaption>Compression effect on latent exploration.</figcaption>
+        </figure>
+        <figure class="figure-card is-wide">
+          <picture>
+            <source srcset="runs/ablations/plots/a4_runtime_dark.png" media="(prefers-color-scheme: dark)">
+            <img src="runs/ablations/plots/a4_runtime.png" alt="A4 runtime by compression method" loading="lazy">
+          </picture>
+          <figcaption>Runtime by compression method.</figcaption>
+        </figure>
+        <figure class="figure-card">
+          <picture>
+            <source srcset="runs/ablations/plots/a4_switches_dark.png" media="(prefers-color-scheme: dark)">
+            <img src="runs/ablations/plots/a4_switches.png" alt="A4 compression effect on expert switching" loading="lazy">
+          </picture>
+          <figcaption>Compression effect on expert switching.</figcaption>
+        </figure>
+        <figure class="figure-card is-wide">
+          <picture>
+            <source srcset="runs/ablations/plots/memory_vs_throughput_dark.png" media="(prefers-color-scheme: dark)">
+            <img src="runs/ablations/plots/memory_vs_throughput.png" alt="A4 compression impact on throughput" loading="lazy">
+          </picture>
+          <figcaption>Compression impact on throughput.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- Limitations -->
 <section class="section">
   <div class="container">
@@ -611,8 +797,8 @@ def contrastive_ties_merge(logit_list, trim_thresh=0.1):
             <li><strong>Heterogeneous KV Transfer:</strong> Cross-architecture KV-cache transfer requires learned bridging (e.g., <a href="https://arxiv.org/abs/2510.03215" target="_blank">C2C</a>) and is not training-free; DL-MoM’s core guarantees apply to belief routing + consensus + controller + compression.</li>
             <li><strong>Memory Overhead:</strong> Despite KIVI compression, maintaining KV-caches for multiple 7B experts 
             requires ≥24GB VRAM. Consumer deployment limited to 2-3 experts.</li>
-            <li><strong>Empirical Validation:</strong> This paper presents architecture and theoretical analysis. 
-            Comprehensive benchmark results are ongoing work.</li>
+            <li><strong>Empirical Validation:</strong> Ablation-suite results are included here; full multi-benchmark
+            coverage remains ongoing.</li>
           </ul>
         </div>
       </div>
